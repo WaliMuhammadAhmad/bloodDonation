@@ -105,7 +105,7 @@ function SignUp() {
     <>
       <Navbar user={storedUser} />
 
-      <div className="font-display tracking-tight w-full h-screen bg-[url('img\logo\logo.svg')] flex items-center justify-center">
+      <div className="bg-background tracking-tight w-full h-screen bg-[url('img\logo\logo.svg')] flex items-center justify-center">
         <div className='lg:w-1/3 lg:h-3/4 flex flex-col justify-evenly items-center rounded-xl bg-primary text-text'>
           <h1 className='font-condensed lg:text-5xl text-text'>Sign Up</h1>
           <form

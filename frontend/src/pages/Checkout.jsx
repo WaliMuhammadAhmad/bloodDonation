@@ -1,27 +1,18 @@
+import Button from "../components/common/Button";
+
 export default function Checkout() {
   return (
-    <div className='lg:w-1/4 p-5  bg-white text-zinc-900 font-display'>
-      <div className='flex flex-col content-center items-center'>
-        <img
-          className='lg:w-[15vw] md:w-15 sm:w-14'
-          src='img\logo\supreme.svg'
-          alt=''
-        />
-        <div className='p-10 flex flex-col items-center border-1 border-zinc-900 rounded-3xl'>
-          <h1 className='font-condensed lg:text-8xl md:text-5xl sm:text-4xl'>
-            $20.0
-          </h1>
-          <h2 className='lg:text-3xl md:text-2xl sm:text-1xl'>
-            Transaction Sent!
-          </h2>
-        </div>
-        <div className='flex gap-2'>
-          <div>
-            <p>Transaction Hash: 0x1234567890</p>
-          </div>
-          <div>
-            <img className='size-20' src='img\asserts\qr.svg' alt='' />
-          </div>
+    <div className='h-screen min-h-screen bg-background text-text'>
+      <div className='flex flex-col items-center justify-center h-full'>
+        <h1 className='text-2xl font-bold mb-4'>Your request is submitted</h1>
+        <p className='mb-8'>We will ping you when complete.</p>
+        <div className='flex space-x-4'>
+          <Button to='/panel/id' className=''>
+            Panel
+          </Button>
+          <Button to='/' className='bg-text border-text hover:text-text'>
+            Home
+          </Button>
         </div>
       </div>
     </div>

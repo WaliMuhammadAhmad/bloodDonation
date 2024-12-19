@@ -6,18 +6,17 @@ import Gallery from "../components/Gallery";
 import Cards from "../components/Cards";
 import Footer from "../components/Footer";
 import Testimonials from "../components/Testimonials";
+import { homeData } from "../data/pages/home";
 
 export default function HomePage() {
-  const storedUser = JSON.parse(localStorage.getItem("user"));
-
   React.useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   return (
     <div className='w-full min-h-screen bg-background text-text'>
-      <Navbar user={storedUser} />
-      <LandingPage />
+      <Navbar />
+      <LandingPage data={homeData} />
       <Intro />
       <Gallery />
       <Testimonials />

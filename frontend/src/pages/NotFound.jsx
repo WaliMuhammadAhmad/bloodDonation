@@ -1,16 +1,22 @@
-import React from 'react'
-
 function NotFound() {
   return (
-    <div className='relative w-full h-screen flex flex-col justify-center items-center font-condensed bg-zinc-900 text-white'>
-      <img src="img/asserts/ghost.gif" alt="" />
-      <div className="absolute bottom-20 text-center">
-        <h1 className='text-zinc-500 text-8xl font-bold'>404</h1>
-        <h2 className='text-zinc-500 text-5xl font-semibold'>Page Not Found</h2>
+    <div className='flex flex-col items-center justify-center h-screen bg-background text-text'>
+      <h1 className='text-6xl font-bold mb-4'>404</h1>
+      <p className='text-2xl mb-8'>Page Not Found</p>
+      <div className='flex space-x-4'>
+        <button
+          onClick={() => (window.location.href = "/")}
+          className='w-full py-3 px-5 text-sm text-center font-medium border text-primary border-primary rounded-md hover:bg-primary hover:text-text focus:outline-none focus:ring-0'>
+          Home
+        </button>
+        <button
+          onClick={() => window.history.back()}
+          className='w-full py-3 px-5 text-sm text-center font-medium border text-primary border-primary rounded-md hover:bg-primary hover:text-text focus:outline-none focus:ring-0'>
+          Back
+        </button>
       </div>
     </div>
-
-  )
+  );
 }
 
-export default NotFound
+export default NotFound;

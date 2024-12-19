@@ -37,7 +37,7 @@ export default function Gallery() {
       </div>
 
       {/* Button */}
-      <Button to={impactData.buttonLink} className='hover:border-secondary'>
+      <Button to={impactData.buttonLink} className='w-1/6 border-2'>
         {impactData.buttonText}
       </Button>
     </div>

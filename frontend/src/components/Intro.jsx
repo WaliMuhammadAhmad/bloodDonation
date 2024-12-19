@@ -18,10 +18,7 @@ export default function Intro() {
       <div className='w-full flex flex-wrap gap-5 pt-10 border-t-[0.1vh] border-text justify-between'>
         <div className='flex flex-col gap-2 flex-wrap'>
           <Title>Our Approach</Title>
-          <Button
-            className='w-fit'
-            to={IntoSection.buttonLink}
-            variant='outlined'>
+          <Button className='w-fit' to={IntoSection.buttonLink}>
             Read More
           </Button>
         </div>

@@ -54,10 +54,14 @@ export default function Testimonials() {
 
       {/* Buttons */}
       <div className='mt-10 flex flex-col md:flex-row gap-4'>
-        <Button to={testimonialsData.buttons[0].link} variant='outlined'>
+        <Button
+          to={testimonialsData.buttons[0].link}
+          className='border-text text-text'>
           {testimonialsData.buttons[0].text}
         </Button>
-        <Button to={testimonialsData.buttons[1].link} variant='filled'>
+        <Button
+          to={testimonialsData.buttons[1].link}
+          className='bg-text hover:border-text hover:text-text'>
           {testimonialsData.buttons[1].text}
         </Button>
       </div>

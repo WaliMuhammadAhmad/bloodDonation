@@ -1,7 +1,7 @@
 import { useState } from "react";
 import RenderProfile from "./pages/RenderProfile";
 import RenderReview from "./pages/RenderReview";
-import RenderManageBloodAppeals from "./pages/RenderManageBloodAppeals";
+import RenderDonarRequests from "./pages/RenderDonarRequests";
 import RenderHome from "./pages/RenderHome";
 
 const theme = {
@@ -13,7 +13,7 @@ const theme = {
     "flex justify-around items-center border rounded-xl bg-background",
 };
 
-function User() {
+function Donor() {
   const [selectedItem, setSelectedItem] = useState("Home");
 
   // Function to handle sidebar item click
@@ -36,10 +36,12 @@ function User() {
             </li>
             <li
               className={`${theme.SidebarItems} ${
-                selectedItem === "Appeals" ? "bg-primary rounded-l-xl" : ""
+                selectedItem === "Donation Requests"
+                  ? "bg-primary rounded-l-xl"
+                  : ""
               }`}
-              onClick={() => handleItemClick("Appeals")}>
-              Appeals
+              onClick={() => handleItemClick("Donation Requests")}>
+              Donation Requests
             </li>
             <li
               className={`${theme.SidebarItems} ${
@@ -60,13 +62,15 @@ function User() {
       </div>
       {/* Content */}
       <div className='flex-1 bg-primary rounded-l-xl p-10'>
-        {selectedItem === "Home" && <RenderHome role='user' />}
-        {selectedItem === "Appeals" && <RenderManageBloodAppeals role='user' />}
-        {selectedItem === "Review" && <RenderReview role='user' />}
+        {selectedItem === "Home" && <RenderHome role='donor' />}
+        {selectedItem === "Donation Requests" && (
+          <RenderDonarRequests role='donor' />
+        )}
+        {selectedItem === "Review" && <RenderReview role='donor' />}
         {selectedItem === "Profile" && <RenderProfile />}
       </div>
     </div>
   );
 }
 
-export default User;
+export default Donor;

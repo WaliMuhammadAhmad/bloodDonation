@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 function RenderManageAdmin() {
@@ -29,9 +29,9 @@ function RenderManageAdmin() {
     <div>
       <div className='container mx-auto px-4'>
         <h1 className='font-condensed text-5xl font-bold'>Manage Admins</h1>
-        <div className='flex flex-col w-full gap-2 pt-5 rounded-xl bg-zinc-900 items-center'>
-          <h1 className='text-[#CDEA68] text-lg font-semibold'>Total Admins</h1>
-          <h1 className='text-[#CDEA68] font-condensed text-8xl font-bold'>
+        <div className='flex flex-col w-full gap-2 pt-5 rounded-xl bg-background items-center'>
+          <h1 className='bg-text text-lg font-semibold'>Total Admins</h1>
+          <h1 className='bg-text font-condensed text-8xl font-bold'>
             {totaladmins}
           </h1>
         </div>
@@ -58,7 +58,7 @@ function RenderManageAdmin() {
                     <td>{admin.lastName}</td>
                     <td>{admin.email}</td>
                     <td>
-                      <button className='bg-red-500 text-white px-4 py-2 rounded-md'>
+                      <button className='bg-red-500 text-text px-4 py-2 rounded-md'>
                         Delete
                       </button>
                     </td>

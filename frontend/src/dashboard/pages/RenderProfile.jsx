@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { SuccessAlert, ErrorAlert } from "../../components/common/Alerts";
 import axios from "axios";
 
-function RenderAdminProfile() {
+function RenderProfile() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
 
@@ -121,7 +121,7 @@ function RenderAdminProfile() {
               name='firstName'
               value={userInfo.firstName}
               onChange={handleChange}
-              className='w-full px-3 py-2 bg-zinc-900 text-white border rounded-md focus:outline-none focus:border-primary'
+              className='w-full px-3 py-2 bg-background text-text border rounded-md focus:outline-none focus:border-primary'
             />
             {errors.firstName && (
               <span className='text-red-500'>{errors.firstName}</span>
@@ -135,7 +135,7 @@ function RenderAdminProfile() {
               name='lastName'
               value={userInfo.lastName}
               onChange={handleChange}
-              className='w-full px-3 py-2 border bg-zinc-900 text-white rounded-md focus:outline-none focus:border-primary'
+              className='w-full px-3 py-2 border bg-background text-text rounded-md focus:outline-none focus:border-primary'
             />
             {errors.lastName && (
               <span className='text-red-500'>{errors.lastName}</span>
@@ -149,7 +149,7 @@ function RenderAdminProfile() {
               name='password'
               value={userInfo.password}
               onChange={handleChange}
-              className='w-full px-3 py-2 border bg-zinc-900 text-white rounded-md focus:outline-none focus:border-primary'
+              className='w-full px-3 py-2 border bg-background text-text rounded-md focus:outline-none focus:border-primary'
             />
             {errors.password && (
               <span className='text-red-500'>{errors.password}</span>
@@ -157,7 +157,7 @@ function RenderAdminProfile() {
           </div>
 
           <input
-            className='border w-1/4 p-2 bg-zinc-900 text-white rounded-xl hover:invert'
+            className='border w-1/4 p-2 bg-background text-text rounded-xl hover:invert'
             type='submit'
             value='Update Profile'
           />
@@ -169,4 +169,4 @@ function RenderAdminProfile() {
   );
 }
 
-export default RenderAdminProfile;
+export default RenderProfile;

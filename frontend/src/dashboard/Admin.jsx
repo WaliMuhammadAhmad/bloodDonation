@@ -1,100 +1,111 @@
-import React, { useState } from 'react';
-import RenderAdminProfile from './components/RenderAdminProfile';
-import RenderManageReview from './components/RenderManageReview';
-import RenderManageUser from './components/RenderManageUser';
-import RenderManageAdmin from './components/RenderManageAdmin';
-import RenderManageTemplate from './components/RenderManageTemplate';
-import RenderAddTemplate from './components/RenderAddTemplate';
-import RenderProject from './components/RenderProject';
-import RenderAdminHome from './components/RenderAdminHome';
+import { useState } from "react";
+import RenderManageBloodAppeals from "./pages/RenderManageBloodAppeals";
+import RenderManageBloodInventory from "./pages/RenderManageBloodInventory";
+import RenderDonarRequests from "./pages/RenderDonarRequests";
+import RenderManageDonors from "./pages/RenderManageDonors";
+import RenderManageUser from "./pages/RenderManageUser";
+import RenderProfile from "./pages/RenderProfile";
+import RenderHome from "./pages/RenderHome";
 
 const theme = {
-    SidebarItems: 'font-display tracking-tight py-2 px-2 hover:rounded-l-xl hover:border hover:bg-zinc-800 cursor-pointer',
-    HomeCards: 'w-1/2 mx-2 bg-zinc-700 shadow-lg rounded-lg bg-zinc-900 py-10',
-    HomeProject: 'px-5 bg-zinc-700 shadow-lg rounded-lg bg-zinc-900 py-10',
-    ProjectCards: 'flex justify-around content-around items-center border rounded-xl bg-zinc-900',
-}
+  SidebarItems:
+    "tracking-tight p-2 hover:rounded-l-xl hover:border hover:bg-primary cursor-pointer",
+};
 
 function Admin() {
+  const [selectedItem, setSelectedItem] = useState("Home");
 
-    const [selectedItem, setSelectedItem] = useState('Home');
+  // Function to handle sidebar item click
+  const handleItemClick = (item) => {
+    setSelectedItem(item);
+  };
 
-    // Function to handle sidebar item click
-    const handleItemClick = (item) => {
-        setSelectedItem(item);
-    };
-
-    return (
-        <div className="flex">
-            {/* Sidebar */}
-            <div className="bg-zinc-900 text-white w-64 flex-shrink-0">
-                <div className="py-6 pl-6 flex flex-col">
-                    <h2 className="font-condensed lg:text-5xl sm:text-2xl font-bold">Dashboard</h2>
-                    <ul className="mt-6">
-                        <li
-                            className={`${theme.SidebarItems} ${selectedItem === 'Home' ? 'bg-zinc-800 rounded-l-xl' : ''}`}
-                            onClick={() => handleItemClick('Home')}
-                        >
-                            Home
-                        </li>
-                        <li
-                            className={`${theme.SidebarItems} ${selectedItem === 'Projects' ? 'bg-zinc-800 rounded-l-xl' : ''}`}
-                            onClick={() => handleItemClick('Projects')}
-                        >
-                            Projects
-                        </li>
-                        <li
-                            className={`${theme.SidebarItems} ${selectedItem === 'Add Template' ? 'bg-zinc-800 rounded-l-xl' : ''}`}
-                            onClick={() => handleItemClick('Add Template')}
-                        >
-                            Add Template
-                        </li>
-                        <li
-                            className={`${theme.SidebarItems} ${selectedItem === 'Manage Templates' ? 'bg-zinc-800 rounded-l-xl' : ''}`}
-                            onClick={() => handleItemClick('Manage Templates')}
-                        >
-                            Manage Templates
-                        </li>
-                        <li
-                            className={`${theme.SidebarItems} ${selectedItem === 'Manage User' ? 'bg-zinc-800 rounded-l-xl' : ''}`}
-                            onClick={() => handleItemClick('Manage User')}
-                        >
-                            Manage User
-                        </li>
-                        <li
-                            className={`${theme.SidebarItems} ${selectedItem === 'Manage Admin' ? 'bg-zinc-800 rounded-l-xl' : ''}`}
-                            onClick={() => handleItemClick('Manage Admin')}
-                        >
-                            Manage Admin
-                        </li>
-                        <li
-                            className={`${theme.SidebarItems} ${selectedItem === 'Manage Review' ? 'bg-zinc-800 rounded-l-xl' : ''}`}
-                            onClick={() => handleItemClick('Manage Review')}
-                        >
-                            Manage Review
-                        </li>
-                        <li
-                            className={`${theme.SidebarItems} ${selectedItem === 'Manage Profile' ? 'bg-zinc-800 rounded-l-xl' : ''}`}
-                            onClick={() => handleItemClick('Manage Profile')}
-                        >
-                            Manage Profile
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            {/* Content */}
-            <div className="flex-1 bg-zinc-800 rounded-l-xl p-10">
-                {selectedItem === 'Home' && <RenderAdminHome />}
-                {selectedItem === 'Projects' && <RenderProject />}
-                {selectedItem === 'Add Template' && <RenderAddTemplate />}
-                {selectedItem === 'Manage Templates' && <RenderManageTemplate />}
-                {selectedItem === 'Manage User' && <RenderManageUser />}
-                {selectedItem === 'Manage Admin' && <RenderManageAdmin />}
-                {selectedItem === 'Manage Review' && <RenderManageReview />}
-                {selectedItem === 'Manage Profile' && <RenderAdminProfile />}
-            </div>
+  return (
+    <div className='flex'>
+      {/* Sidebar */}
+      <div className='bg-background text-text w-64 flex-shrink-0'>
+        <div className='py-6 pl-6 flex flex-col'>
+          <ul className='mt-6'>
+            <li
+              className={`${theme.SidebarItems} ${
+                selectedItem === "Home" ? "bg-primary rounded-l-xl" : ""
+              }`}
+              onClick={() => handleItemClick("Home")}>
+              Home
+            </li>
+            <li
+              className={`${theme.SidebarItems} ${
+                selectedItem === "Manage Blood Inventory"
+                  ? "bg-primary rounded-l-xl"
+                  : ""
+              }`}
+              onClick={() => handleItemClick("Manage Blood Inventory")}>
+              Manage Blood Inventory
+            </li>
+            <li
+              className={`${theme.SidebarItems} ${
+                selectedItem === "Manage Blood Appeals"
+                  ? "bg-primary rounded-l-xl"
+                  : ""
+              }`}
+              onClick={() => handleItemClick("Manage Blood Appeals")}>
+              Manage Blood Appeals
+            </li>
+            <li
+              className={`${theme.SidebarItems} ${
+                selectedItem === "Manage Donar Requests"
+                  ? "bg-primary rounded-l-xl"
+                  : ""
+              }`}
+              onClick={() => handleItemClick("Manage Donar Requests")}>
+              Manage Donar Requests
+            </li>
+            <li
+              className={`${theme.SidebarItems} ${
+                selectedItem === "Manage Users" ? "bg-primary rounded-l-xl" : ""
+              }`}
+              onClick={() => handleItemClick("Manage Users")}>
+              Manage Users
+            </li>
+            <li
+              className={`${theme.SidebarItems} ${
+                selectedItem === "Manage Donors"
+                  ? "bg-primary rounded-l-xl"
+                  : ""
+              }`}
+              onClick={() => handleItemClick("Manage Donors")}>
+              Manage Donors
+            </li>
+            <li
+              className={`${theme.SidebarItems} ${
+                selectedItem === "Manage Profile"
+                  ? "bg-primary rounded-l-xl"
+                  : ""
+              }`}
+              onClick={() => handleItemClick("Manage Profile")}>
+              Manage Profile
+            </li>
+          </ul>
         </div>
-    )
+      </div>
+      {/* Content */}
+      <div className='flex-1 bg-primary rounded-l-xl p-10 min-h-[80dvh] h-auto overflow-y-scroll'>
+        {selectedItem === "Home" && <RenderHome role='admin' />}
+        {selectedItem === "Manage Blood Appeals" && (
+          <RenderManageBloodAppeals role='admin' />
+        )}
+        {selectedItem === "Manage Blood Inventory" && (
+          <RenderManageBloodInventory />
+        )}
+        {selectedItem === "Manage Donar Requests" && (
+          <RenderDonarRequests role='admin' />
+        )}
+        {selectedItem === "Manage Donors" && <RenderManageDonors />}
+        {selectedItem === "Manage Users" && <RenderManageUser />}
+        {selectedItem === "Manage Profile" && <RenderProfile />}
+      </div>
+    </div>
+  );
 }
 
-export default Admin
+export default Admin;

@@ -4,7 +4,7 @@ const theme = {
   cardContainer: "lg:h-1/2 h-full w-full",
   card: "card relative flex flex-col items-center justify-center rounded-xl w-full h-full sm:h-50",
   cardText:
-    "absolute lg:px-5 lg:py-1 sm:text-sm rounded-full lg:border-2 lg:left-5 lg:bottom-10 left-2 bottom-5 text-white font-display",
+    "absolute lg:px-5 lg:py-1 sm:text-sm rounded-full lg:border-2 lg:left-5 lg:bottom-10 left-2 bottom-5 text-text",
 };
 
 export default function Cards() {

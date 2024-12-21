@@ -18,23 +18,23 @@ export default function Testimonials() {
       {/* Testimonials Grid */}
       <div className='grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-6xl px-4'>
         {/* Donor Testimonials */}
-        <div className='bg-zinc-800 rounded-lg p-6 shadow-lg'>
+        <div className='bg-background rounded-lg p-6 shadow-lg'>
           <h3 className='text-2xl font-bold text-primary'>Donors</h3>
           {testimonialsData.donorTestimonials.map((testimonial, index) => (
             <div key={index} className='mt-4'>
               <p className='text-lg'>{testimonial.quote}</p>
-              <p className='text-secondary mt-2'>- {testimonial.name}</p>
+              <p className='text-background mt-2'>- {testimonial.name}</p>
             </div>
           ))}
         </div>
 
         {/* Recipient Testimonials */}
-        <div className='bg-zinc-800 rounded-lg p-6 shadow-lg'>
+        <div className='bg-background rounded-lg p-6 shadow-lg'>
           <h3 className='text-2xl font-bold text-primary'>Recipients</h3>
           {testimonialsData.recipientTestimonials.map((testimonial, index) => (
             <div key={index} className='mt-4'>
               <p className='text-lg'>{testimonial.quote}</p>
-              <p className='text-secondary mt-2'>- {testimonial.name}</p>
+              <p className='text-background mt-2'>- {testimonial.name}</p>
             </div>
           ))}
         </div>

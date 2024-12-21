@@ -6,7 +6,7 @@ export default function Navbar() {
   const { isAuthenticated, logout } = useAuth();
 
   return (
-    <div className='fixed z-[999] w-full px-[2vw] py-[2vh] font-display text-white flex justify-between items-center backdrop-blur-sm'>
+    <div className='fixed z-[999] w-full px-[2vw] py-[2vh] text-text flex justify-between items-center backdrop-blur-sm'>
       {/* Logo */}
       <div className='logo'>
         <Link

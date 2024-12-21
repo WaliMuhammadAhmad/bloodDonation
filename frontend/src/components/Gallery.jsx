@@ -37,9 +37,11 @@ export default function Gallery() {
       </div>
 
       {/* Button */}
-      <Button to={impactData.buttonLink} className='w-1/6 border-2'>
-        {impactData.buttonText}
-      </Button>
+      <div className=''>
+        <Button to={impactData.buttonLink} className='w-fit border-2'>
+          {impactData.buttonText}
+        </Button>
+      </div>
     </div>
   );
 }

@@ -119,7 +119,7 @@ function SignUp() {
                   name='firstName'
                   value={formData.firstName}
                   onChange={handleChange}
-                  className='block py-2.5 px-0 w-full text-sm text-text bg-transparent border-0 border-b-2 border-zinc-700 appearance-none dark:text-white dark:border-text dark:focus:border-text focus:outline-none focus:ring-0 focus:border-text peer'
+                  className='block py-2.5 px-0 w-full text-sm text-text bg-transparent border-0 border-b-2 border-zinc-700 appearance-none dark:text-text dark:border-text dark:focus:border-text focus:outline-none focus:ring-0 focus:border-text peer'
                   placeholder=' '
                   required
                 />
@@ -140,7 +140,7 @@ function SignUp() {
                   name='lastName'
                   value={formData.lastName}
                   onChange={handleChange}
-                  className='block py-2.5 px-0 w-full text-sm text-text bg-transparent border-0 border-b-2 border-zinc-700 appearance-none dark:text-white dark:border-text dark:focus:border-text focus:outline-none focus:ring-0 focus:border-text peer'
+                  className='block py-2.5 px-0 w-full text-sm text-text bg-transparent border-0 border-b-2 border-zinc-700 appearance-none dark:text-text dark:border-text dark:focus:border-text focus:outline-none focus:ring-0 focus:border-text peer'
                   placeholder=' '
                   required
                 />
@@ -162,7 +162,7 @@ function SignUp() {
                 name='email'
                 value={formData.email}
                 onChange={handleChange}
-                className='block py-2.5 px-0 w-full text-sm text-text bg-transparent border-0 border-b-2 border-zinc-700 appearance-none dark:text-white dark:border-text dark:focus:border-text focus:outline-none focus:ring-0 focus:border-text peer'
+                className='block py-2.5 px-0 w-full text-sm text-text bg-transparent border-0 border-b-2 border-zinc-700 appearance-none dark:text-text dark:border-text dark:focus:border-text focus:outline-none focus:ring-0 focus:border-text peer'
                 placeholder=' '
                 required
               />
@@ -183,7 +183,7 @@ function SignUp() {
                 name='password'
                 value={formData.password}
                 onChange={handleChange}
-                className='block py-2.5 px-0 w-full text-sm text-text bg-transparent border-0 border-b-2 border-zinc-700 appearance-none dark:text-white dark:border-text dark:focus:border-text focus:outline-none focus:ring-0 focus:border-text peer'
+                className='block py-2.5 px-0 w-full text-sm text-text bg-transparent border-0 border-b-2 border-zinc-700 appearance-none dark:text-text dark:border-text dark:focus:border-text focus:outline-none focus:ring-0 focus:border-text peer'
                 placeholder=' '
                 required
               />
@@ -204,7 +204,7 @@ function SignUp() {
                 name='repeatPassword'
                 value={formData.repeatPassword}
                 onChange={handleChange}
-                className='block py-2.5 px-0 w-full text-sm text-text bg-transparent border-0 border-b-2 border-zinc-700 appearance-none dark:text-white dark:border-text dark:focus:border-text focus:outline-none focus:ring-0 focus:border-text peer'
+                className='block py-2.5 px-0 w-full text-sm text-text bg-transparent border-0 border-b-2 border-zinc-700 appearance-none dark:text-text dark:border-text dark:focus:border-text focus:outline-none focus:ring-0 focus:border-text peer'
                 placeholder=' '
                 required
               />

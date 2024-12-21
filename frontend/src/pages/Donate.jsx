@@ -14,7 +14,7 @@ export default function Donate() {
   }, []);
 
   return (
-    <div className='w-full text-white'>
+    <div className='w-full text-text'>
       <Navbar user={storedUser} />
       <Starter text='Donate Blood' />
       <Form />

@@ -1,35 +1,45 @@
 import Topbar from "../dashboard/Topbar";
 import User from "../dashboard/User";
 import Admin from "../dashboard/Admin";
+import Donor from "../dashboard/Donor";
 import { useLocation } from "react-router";
 
 function Dashboard() {
   const location = useLocation();
-  const person = {
-    name: "Wali Muhammad",
-    img: "img/social/founder.jpg",
+  const renderType = location.pathname.split("/")[2];
+
+  const renderContent = () => {
+    if (renderType === "user") {
+      return (
+        <>
+          <Topbar />
+          <User />
+        </>
+      );
+    } else if (renderType === "admin") {
+      return (
+        <>
+          <Topbar />
+          <Admin />
+        </>
+      );
+    } else if (renderType === "donor") {
+      return (
+        <>
+          <Topbar />
+          <Donor />
+        </>
+      );
+    } else {
+      return (
+        <div className='text-center text-primary text-3xl'>Invalid Role</div>
+      );
+    }
   };
 
-  const admin = {
-    name: "Wali Muhammad",
-    img: "img/social/founder.jpg",
-  };
-
-  if (location === "user") {
-    return (
-      <div className='bg-zinc-900 text-white'>
-        <Topbar {...person} />
-        <User />
-      </div>
-    );
-  } else if (location == "admin") {
-    return (
-      <div className='bg-zinc-900 text-white'>
-        <Topbar {...admin} />
-        <Admin />
-      </div>
-    );
-  } else return null;
+  return (
+    <div className='bg-background text-text h-screen'>{renderContent()}</div>
+  );
 }
 
 export default Dashboard;

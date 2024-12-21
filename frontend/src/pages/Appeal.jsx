@@ -12,7 +12,7 @@ export default function Appeal() {
   }, []);
 
   return (
-    <div className='text-white'>
+    <div className='text-text'>
       <Navbar />
       <Starter text='Apeal for Blood' />
       <Form />

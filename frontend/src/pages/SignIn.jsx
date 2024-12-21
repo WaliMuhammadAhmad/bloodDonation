@@ -111,7 +111,7 @@ function SignIn() {
                 name='password'
                 value={formData.password}
                 onChange={handleChange}
-                className='block py-2.5 px-0 w-full text-sm  bg-transparent border-0 border-b-2 border-text appearance-none dark:text-white dark:border-text dark:focus:border-text focus:outline-none focus:ring-0 focus:border-text peer'
+                className='block py-2.5 px-0 w-full text-sm  bg-transparent border-0 border-b-2 border-text appearance-none dark:text-text dark:border-text dark:focus:border-text focus:outline-none focus:ring-0 focus:border-text peer'
                 placeholder=' '
                 required
               />

@@ -1,5 +1,4 @@
-// src/data/error/error.ts
-export const errorData = {
+const errorData = {
   notFound: {
     title: "404 - Page Not Found",
     message: "The page you’re looking for doesn’t exist.",
@@ -13,3 +12,5 @@ export const errorData = {
     message: "Something went wrong. Please try again later.",
   },
 };
+
+export default errorData;

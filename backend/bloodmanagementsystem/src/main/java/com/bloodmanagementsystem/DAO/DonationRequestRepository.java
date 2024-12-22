@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface DonationRequestRepository extends JpaRepository<DonationRequest, Integer> {
- //   List<DonationRequest> findByUserUserID(int userID); // Custom query to get requests by user
+   // List<DonationRequest> findByUserUserID(int userID); // Custom query to get requests by user
 }

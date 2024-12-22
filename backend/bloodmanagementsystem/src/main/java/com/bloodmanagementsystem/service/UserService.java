@@ -25,7 +25,7 @@ public interface UserService {
 
     ResponseEntity<String> makeBloodAppeal(Map<String, String> requestMap);
     
-  //  DonationRequest createDonationRequest(Map<String, Object> requestMap);
+    DonationRequest createDonationRequest(Map<String, Object> requestMap);
     
 //    //  abstract function  to update user
 //    ResponseEntity<String> update(Map<String,String> requestMap);

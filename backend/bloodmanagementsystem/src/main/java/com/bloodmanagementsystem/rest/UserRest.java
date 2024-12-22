@@ -1,6 +1,7 @@
 package com.bloodmanagementsystem.rest;
 
 
+import com.bloodmanagementsystem.Model.DonationRequest;
 import com.bloodmanagementsystem.wrapper.UserWrapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,9 +28,9 @@ public interface UserRest {
     @PostMapping("/bloodappeal")
     public ResponseEntity<String> makeBloodAppeal(@RequestBody Map<String, String> requestMap);
 
-//    @PostMapping("/request")
-//    public ResponseEntity<DonationRequest> requestDonation(@RequestBody Map<String, Object> requestMap);
-     
+    @PostMapping("/request")
+    public ResponseEntity<DonationRequest> requestDonation(@RequestBody Map<String, Object> requestMap);
+        
     
     
     // //    APi to enable and disable user account

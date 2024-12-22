@@ -6,11 +6,13 @@ import com.bloodmanagementsystem.JWT.JwtFilter;
 import com.bloodmanagementsystem.JWT.JwtUtils;
 import com.bloodmanagementsystem.Model.BloodAppeal;
 import com.bloodmanagementsystem.Model.BloodGroup;
+import com.bloodmanagementsystem.Model.DonationRequest;
 import com.bloodmanagementsystem.Model.Status;
 import com.bloodmanagementsystem.Model.User;
 import com.bloodmanagementsystem.constents.CafeConstants;
 import com.bloodmanagementsystem.DAO.BloodAppealRepository;
 import com.bloodmanagementsystem.DAO.BloodGroupRepository;
+import com.bloodmanagementsystem.DAO.DonationRequestRepository;
 import com.bloodmanagementsystem.DAO.UserDao;
 
 import com.bloodmanagementsystem.service.UserService;
@@ -60,6 +62,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private BloodGroupRepository bloodGroupRepository;
     
+    @Autowired
+    private DonationRequestRepository donationRequestRepository;
   
 //    @Autowired
 //    private EmailUtils emailUtils;
@@ -191,6 +195,32 @@ public class UserServiceImpl implements UserService {
             return new ResponseEntity<>("Error creating blood appeal", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+//  -----------service to make donation request
+    
+    @Override
+    public DonationRequest createDonationRequest(Map<String, Object> requestMap) {
+        int userId = (int) requestMap.get("userId");
+        int bloodGroupId = (int) requestMap.get("bloodGroupId");
+        String location = (String) requestMap.get("location");
+        int quantity = (int) requestMap.get("quantity");
+
+        // Fetch the User and BloodGroup from the database
+        User user = userDao.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found!"));
+        BloodGroup bloodGroup = bloodGroupRepository.findById(bloodGroupId)
+                .orElseThrow(() -> new RuntimeException("BloodGroup not found!"));
+
+        // Create a new DonationRequest object
+        DonationRequest donationRequest = new DonationRequest();
+        donationRequest.setUser(user);
+        donationRequest.setBloodGroup(bloodGroup);
+        donationRequest.setLocation(location);
+        donationRequest.setQuantity(quantity);
+
+        // Save and return the created request
+        return donationRequestRepository.save(donationRequest);
+    }
+    
     
    
 //    //      -----------service to update user

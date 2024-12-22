@@ -1,5 +1,6 @@
 package com.bloodmanagementsystem.restimple;
 
+import com.bloodmanagementsystem.Model.DonationRequest;
 import com.bloodmanagementsystem.constents.CafeConstants;
 import com.bloodmanagementsystem.rest.UserRest;
 import com.bloodmanagementsystem.service.UserService;
@@ -23,6 +24,7 @@ public class UserRestImpl implements UserRest {
 
     @Autowired
     UserService userService;
+    
 
     //    -------Api implementation for sign up
     @Override
@@ -77,7 +79,10 @@ public class UserRestImpl implements UserRest {
         }
     }
   
-    
+    public ResponseEntity<DonationRequest> requestDonation(Map<String, Object> requestMap) {
+        DonationRequest createdRequest = userService.createDonationRequest(requestMap);
+        return ResponseEntity.ok(createdRequest);
+    }
 //
 //    //---------Api implementation for Update Status
 //    @Override

@@ -1,10 +1,31 @@
 package com.bloodmanagementsystem.Model;
 import jakarta.persistence.*;
+
+import java.io.Serial;
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
+ //query to find admin by email
+@NamedQuery(name = "Admin.findByEmailId", query = "SELECT u FROM Admin u WHERE u.email = :email")
+ //query to get all admins
+@NamedQuery(name = "Admin.getAllAdmin", query = "SELECT new com.bloodmanagementsystem.wrapper.AdminWrapper(u.id, u.name, u.email, u.password) FROM Admin u ")
+
+
 @Entity
-@Table(name = "Admins")
+@DynamicUpdate
+@DynamicInsert
+@Table(name = "Admin")
 public class Admin {
+	
+	// Default Constructor
+    public Admin() {
+    }
+    
+    @Serial
+    private static final long serialVersionUID = 1L;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int adminID;
@@ -23,6 +44,7 @@ public class Admin {
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
 
     @PrePersist
     protected void onCreate() {
@@ -83,4 +105,5 @@ public class Admin {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+  
 }

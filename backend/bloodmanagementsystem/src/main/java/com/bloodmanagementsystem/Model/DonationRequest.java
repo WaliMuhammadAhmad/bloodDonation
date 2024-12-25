@@ -3,7 +3,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "BloodDonationRequests")
+@Table(name = "BloodDonationRequest")
 public class DonationRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +36,10 @@ public class DonationRequest {
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
-
+    
+    @Column(nullable = true)
+    private String adminRemarks;
+    
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
@@ -119,6 +122,13 @@ public class DonationRequest {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+    public String getAdminRemarks() {
+        return adminRemarks;
+    }
+
+    public void setAdminRemarks(String remarks) {
+        this.adminRemarks = remarks;
     }
 }
 

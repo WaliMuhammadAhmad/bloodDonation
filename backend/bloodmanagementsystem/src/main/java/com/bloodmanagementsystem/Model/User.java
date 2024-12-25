@@ -9,6 +9,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,10 +63,22 @@ public class User implements Serializable {
     @Column(name = "password")
     private String password;
     
+    @Column(nullable = true)
+    private LocalDate lastDonationDate;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     private LocalDateTime updatedAt = LocalDateTime.now();
+   
+    
+    public LocalDate getLastDonationDate() {
+        return lastDonationDate;
+    }
+
+    public void setLastDonationDate(LocalDate ldate) {
+        this.lastDonationDate = ldate;
+    }
 //
 //    @Column(name = "status")
 //    private String status;

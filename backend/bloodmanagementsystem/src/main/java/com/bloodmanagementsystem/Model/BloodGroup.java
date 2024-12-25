@@ -2,7 +2,7 @@ package com.bloodmanagementsystem.Model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 @Entity
-@Table(name = "BloodGroups")
+@Table(name = "BloodGroup")
 public class BloodGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

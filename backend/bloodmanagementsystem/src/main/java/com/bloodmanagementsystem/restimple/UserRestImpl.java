@@ -56,18 +56,18 @@ public class UserRestImpl implements UserRest {
     @PersistenceContext
     private EntityManager entityManager;
 
-    //---------Api implementation for get all users
-    @Override
-    public ResponseEntity<List<UserWrapper>> getAllUser() {
-        try {
-            List<UserWrapper> userList = userService.getAllUser().getBody();
-            System.out.println("Controller Response: " + userList);
-            return new ResponseEntity<>(userList, HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+//    //---------Api implementation for get all users
+//    @Override
+//    public ResponseEntity<List<UserWrapper>> getAllUser() {
+//        try {
+//            List<UserWrapper> userList = userService.getAllUser().getBody();
+//            System.out.println("Controller Response: " + userList);
+//            return new ResponseEntity<>(userList, HttpStatus.OK);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
     @Override
     public ResponseEntity<String> makeBloodAppeal( Map<String, String> requestMap) {

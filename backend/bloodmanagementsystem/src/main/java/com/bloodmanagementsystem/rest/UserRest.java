@@ -21,17 +21,16 @@ public interface UserRest {
     @PostMapping(path = "/login")
     public ResponseEntity<String> login(@RequestBody(required = true)Map<String,String> requestMap);
     
- //    Api to get All users
-    @GetMapping(path = "/getusers")
-    public  ResponseEntity<List<UserWrapper>> getAllUser();
+// //    Api to get All users
+//    @GetMapping(path = "/getusers")
+//    public  ResponseEntity<List<UserWrapper>> getAllUser();
     
     @PostMapping("/bloodappeal")
     public ResponseEntity<String> makeBloodAppeal(@RequestBody Map<String, String> requestMap);
 
-    @PostMapping("/request")
+    @PostMapping("/donationrequest")
     public ResponseEntity<DonationRequest> requestDonation(@RequestBody Map<String, Object> requestMap);
         
-    
     
     // //    APi to enable and disable user account
 //    @PostMapping(path = "/update")

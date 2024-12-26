@@ -31,6 +31,9 @@ public class BloodAppeal {
     @Column(nullable = false)
     private Status status = Status.PENDING;
 
+    @Column
+    private String remarks;
+    
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -119,5 +122,13 @@ public class BloodAppeal {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+    
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
     }
 }

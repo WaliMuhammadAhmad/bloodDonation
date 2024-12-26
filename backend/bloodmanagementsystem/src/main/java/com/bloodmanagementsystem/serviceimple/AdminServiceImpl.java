@@ -59,6 +59,9 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     private DonationRequestRepository donationRequestRepository;
     
+    @Autowired
+    private BloodAppealRepository bloodAppealRepository;
+    
     //    -----------service of login
     @Override
     public ResponseEntity<String> login(Map<String, String> requestMap) {
@@ -123,5 +126,58 @@ public class AdminServiceImpl implements AdminService {
         return donationRequestRepository.save(request);
     }
     
+    
+    //  ---------------- Service of Blood Appeal Requests
+    
+    @Override
+    public ResponseEntity<String> approveBloodAppeal(int id) {
+        Optional<BloodAppeal> optionalAppeal = bloodAppealRepository.findById(id);
+        if (!optionalAppeal.isPresent()) {
+            return new ResponseEntity<>("Blood appeal request not found.", HttpStatus.NOT_FOUND);
+        }
 
+        BloodAppeal appeal = optionalAppeal.get();
+        appeal.setStatus(Status.APPROVED);
+        bloodAppealRepository.save(appeal);
+        return new ResponseEntity<>("Blood appeal request approved successfully.", HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<String> rejectBloodAppeal(int id, String remarks) {
+        Optional<BloodAppeal> optionalAppeal = bloodAppealRepository.findById(id);
+        if (!optionalAppeal.isPresent()) {
+            return new ResponseEntity<>("Blood appeal request not found.", HttpStatus.NOT_FOUND);
+        }
+
+        BloodAppeal appeal = optionalAppeal.get();
+        appeal.setStatus(Status.REJECTED);
+        appeal.setRemarks(remarks != null ? remarks : "No remarks provided.");
+        bloodAppealRepository.save(appeal);
+        return new ResponseEntity<>("Blood appeal request rejected successfully.", HttpStatus.OK);
+    }
+
+	 //  abstract function  for Viewing Blood-Donation Requests
+    @Override
+    public ResponseEntity<List<DonationRequest>> getAllDonationRequests() {
+        List<DonationRequest> requests = donationRequestRepository.findAll();
+        return new ResponseEntity<>(requests, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<List<DonationRequest>> getDonationRequestsByStatus(String status) {
+        List<DonationRequest> requests = donationRequestRepository.findByStatus(Status.valueOf(status.toUpperCase()));
+        return new ResponseEntity<>(requests, HttpStatus.OK);
+    }
+	 //  abstract function  for Viewing Blood-Appeal Requests
+    @Override
+    public ResponseEntity<List<BloodAppeal>> getAllBloodAppeals() {
+        List<BloodAppeal> appeals = bloodAppealRepository.findAll();
+        return new ResponseEntity<>(appeals, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<List<BloodAppeal>> getBloodAppealsByStatus(String status) {
+        List<BloodAppeal> appeals = bloodAppealRepository.findByStatus(Status.valueOf(status.toUpperCase()));
+        return new ResponseEntity<>(appeals, HttpStatus.OK);
+    }
 }

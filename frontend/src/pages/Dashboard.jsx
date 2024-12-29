@@ -1,7 +1,6 @@
 import Topbar from "../dashboard/Topbar";
 import User from "../dashboard/User";
 import Admin from "../dashboard/Admin";
-import Donor from "../dashboard/Donor";
 import { useLocation } from "react-router";
 
 function Dashboard() {
@@ -21,13 +20,6 @@ function Dashboard() {
         <>
           <Topbar />
           <Admin />
-        </>
-      );
-    } else if (renderType === "donor") {
-      return (
-        <>
-          <Topbar />
-          <Donor />
         </>
       );
     } else {

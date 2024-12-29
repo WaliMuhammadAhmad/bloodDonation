@@ -13,10 +13,15 @@ export default function Donate() {
     window.scrollTo(0, 0);
   }, []);
 
+  const content = {
+    title: "Donate Blood",
+    text: "Please fill out the form below to donate blood.",
+  };
+
   return (
     <div className='w-full text-text'>
       <Navbar user={storedUser} />
-      <Starter text='Donate Blood' />
+      <Starter title={content.title} text={content.text} />
       <Form />
       <Testimonials />
       <Cards />

@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { SuccessAlert, ErrorAlert } from "../components/common/Alerts";
 import axios from "axios";
 
 function SignIn() {
+  const navigate = useNavigate();
   const storedUser = JSON.parse(localStorage.getItem("user"));
 
   const [showSuccess, setShowSuccess] = useState(false);
@@ -51,14 +52,22 @@ function SignIn() {
 
     if (formValid) {
       try {
-        const response = await axios.post("/signin", formData);
-        "response data", response.data;
-        const userData = response.data.user;
-        localStorage.setItem("user", JSON.stringify(userData));
+        const requestMap = {
+          Email: formData.email,
+          Password: formData.password,
+        };
+        console.log(requestMap);
+        const response = await axios.post("/user/login", requestMap);
 
-        if (response.data.success) {
+        if (response.status === 200) {
+          const userData = response.data;
+          localStorage.setItem("user", JSON.stringify(userData));
+
           setShowSuccess(true);
-          setTimeout(() => setShowSuccess(false), 5000);
+          setTimeout(() => {
+            setShowSuccess(false);
+            navigate("/");
+          }, 5000);
         } else {
           setShowError(true);
           setTimeout(() => setShowError(false), 5000);
@@ -128,7 +137,7 @@ function SignIn() {
             </div>
             <input
               type='submit'
-              value='Sign Up'
+              value='Sign In'
               className='w-full py-2.5 px-5 text-sm font-medium border-2  border-text rounded-md hover:bg-text hover:text-primary focus:outline-none focus:ring-0 focus:border-text'
             />
           </form>

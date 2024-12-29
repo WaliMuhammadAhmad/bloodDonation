@@ -1,11 +1,6 @@
-import { useState } from "react";
-
-const theme = {
-  ListItem:
-    "flex justify-between items-center p-4 border rounded-lg bg-background shadow-md gap-4",
-  SectionTitle: "text-text text-2xl font-bold py-2",
-  ActionButton: "btn btn-sm",
-};
+import { useState, useEffect } from "react";
+import { theme } from "./theme";
+import axios from "axios";
 
 const dummyDonors = [
   {
@@ -37,9 +32,31 @@ const dummyDonors = [
 function RenderManageDonors() {
   const [donors, setDonors] = useState(dummyDonors);
 
-  // CRUD Functions
-  const deleteDonor = (id) => {
-    setDonors((prev) => prev.filter((donor) => donor.id !== id));
+  useEffect(() => {
+    const fetchDonors = async () => {
+      try {
+        const response = await axios.get("/api/donors");
+        if (response.data && response.data.length > 0) {
+          setDonors(response.data);
+        } else {
+          setDonors(dummyDonors);
+        }
+      } catch (error) {
+        console.error("Error fetching donors:", error);
+        setDonors(dummyDonors);
+      }
+    };
+
+    fetchDonors();
+  }, []);
+
+  const deleteDonor = async (id) => {
+    try {
+      await axios.delete(`/api/donors/${id}`);
+      setDonors((prev) => prev.filter((donor) => donor.id !== id));
+    } catch (error) {
+      console.error("Error deleting donor:", error);
+    }
   };
 
   return (
@@ -48,7 +65,6 @@ function RenderManageDonors() {
       <div className='flex flex-col gap-3'>
         {donors.map((donor) => (
           <div key={donor.id} className={theme.ListItem}>
-            {/* Donor Details */}
             <div className='flex flex-col gap-1 text-text'>
               <p>
                 <span className='font-bold'>Name:</span> {donor.name}
@@ -67,15 +83,12 @@ function RenderManageDonors() {
                 <span className='font-bold'>City:</span> {donor.city}
               </p>
             </div>
-
-            {/* Actions */}
             <div className='flex gap-2'>
               <button
                 className={`${theme.ActionButton} btn-error`}
                 onClick={() => deleteDonor(donor.id)}>
                 Delete
               </button>
-              {/* Add Update Logic Here */}
             </div>
           </div>
         ))}

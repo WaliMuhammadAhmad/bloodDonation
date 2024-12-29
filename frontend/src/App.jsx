@@ -12,6 +12,10 @@ import NotFound from "./pages/NotFound";
 import Checkout from "./pages/Checkout";
 import Panel from "./pages/Panel";
 import Approach from "./pages/Approach";
+import Locations from "./pages/Locations";
+import axios from "axios";
+
+axios.defaults.baseURL = "http://localhost:8080";
 
 const router = createBrowserRouter([
   {
@@ -37,6 +41,10 @@ const router = createBrowserRouter([
   {
     path: "/donate",
     element: <Donate />,
+  },
+  {
+    path: "/locations",
+    element: <Locations />,
   },
   {
     path: "/checkout/:id",

@@ -1,9 +1,14 @@
-import { Link } from "react-router-dom";
-import useAuth from "../hooks/useAuth";
+import { Link, useNavigate } from "react-router-dom";
 import navbarData from "../data/common/navbar";
 
 export default function Navbar() {
-  const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
+  const isAuthenticated = !!localStorage.getItem("user");
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/signin");
+  };
 
   return (
     <div className='fixed z-[999] w-full px-[2vw] py-[2vh] text-text flex justify-between items-center backdrop-blur-sm'>
@@ -32,12 +37,12 @@ export default function Navbar() {
         {isAuthenticated ? (
           <>
             <Link
-              to='/profile'
+              to='/dashboard/user'
               className='lg:text-lg md:text-md capitalize font-light'>
-              {navbarData.authenticatedLinks.profile}
+              Panel
             </Link>
             <button
-              onClick={logout}
+              onClick={handleLogout}
               className='lg:text-lg md:text-md capitalize font-light border p-2 rounded-xl'>
               {navbarData.authenticatedLinks.logout}
             </button>

@@ -1,32 +1,39 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { SuccessAlert, ErrorAlert } from "../components/common/Alerts";
 import axios from "axios";
 
-axios.defaults.baseURL = "http://localhost:8080";
-
 function SignUp() {
+  const navigate = useNavigate();
   const storedUser = JSON.parse(localStorage.getItem("user"));
 
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
+  const [showSessionAlert, setShowSessionAlert] = useState(false);
 
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    name: "",
+    city: "",
     email: "",
     password: "",
     repeatPassword: "",
   });
 
   const [errors, setErrors] = useState({
-    firstName: "",
-    lastName: "",
+    name: "",
+    city: "",
     email: "",
     password: "",
     repeatPassword: "",
   });
+
+  // Check for existing user session on component mount
+  useEffect(() => {
+    if (storedUser && storedUser.email) {
+      setShowSessionAlert(true);
+    }
+  }, [storedUser]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,25 +43,25 @@ function SignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const nameRegex = /^[a-zA-Z\s]{3,15}$/;
+    const nameRegex = /^[a-zA-Z\s]{3,30}$/;
     const emailRegex = /^[a-zA-Z][\w.-]*@[a-zA-Z]+\.[a-zA-Z]{2,3}$/;
 
     let formValid = true;
 
     const newErrors = { ...errors };
 
-    if (!nameRegex.test(formData.firstName)) {
-      newErrors.firstName = "First name contains 3-15 letters only.";
+    if (!nameRegex.test(formData.name)) {
+      newErrors.name = "First name contains 3-15 letters only.";
       formValid = false;
     } else {
-      newErrors.firstName = "";
+      newErrors.name = "";
     }
 
-    if (!nameRegex.test(formData.lastName)) {
-      newErrors.lastName = "Last name must contains 3-15 letters only.";
+    if (!nameRegex.test(formData.city)) {
+      newErrors.city = "Last name must contains 3-15 letters only.";
       formValid = false;
     } else {
-      newErrors.lastName = "";
+      newErrors.city = "";
     }
 
     if (!emailRegex.test(formData.email)) {
@@ -82,10 +89,29 @@ function SignUp() {
 
     if (formValid) {
       try {
-        const response = await axios.post("/createuser", formData);
-        if (response.data.success) {
+        const requestMap = {
+          Name: formData.name,
+          Email: formData.email,
+          City: formData.city,
+          Password: formData.password,
+        };
+        console.log(requestMap);
+        const response = await axios.post("/user/signup", requestMap);
+
+        // Handle the response
+        if (response.status === 200) {
           setShowSuccess(true);
-          setTimeout(() => setShowSuccess(false), 5000);
+          setTimeout(() => {
+            setShowSuccess(false);
+            navigate("/signin");
+          }, 5000);
+          setFormData({
+            name: "",
+            city: "",
+            email: "",
+            password: "",
+            repeatPassword: "",
+          });
         } else {
           setShowError(true);
           setTimeout(() => setShowError(false), 5000);
@@ -100,6 +126,13 @@ function SignUp() {
       setTimeout(() => setShowError(false), 5000);
     }
   };
+
+  useEffect(() => {
+    if (showSessionAlert) {
+      alert("An existing session is found. Would you like to sign in?");
+      setShowSessionAlert(false); // Hide the alert
+    }
+  }, [showSessionAlert]);
 
   return (
     <>
@@ -116,43 +149,43 @@ function SignUp() {
               <div className='relative z-0 w-full mb-5 group'>
                 <input
                   type='text'
-                  name='firstName'
-                  value={formData.firstName}
+                  name='name'
+                  value={formData.name}
                   onChange={handleChange}
                   className='block py-2.5 px-0 w-full text-sm text-text bg-transparent border-0 border-b-2 border-zinc-700 appearance-none dark:text-text dark:border-text dark:focus:border-text focus:outline-none focus:ring-0 focus:border-text peer'
                   placeholder=' '
                   required
                 />
                 <label
-                  htmlFor='firstName'
+                  htmlFor='name'
                   className={`peer-focus:font-medium absolute text-sm text-text dark:text-text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-text peer-focus:dark:text-text peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 ${
-                    errors.firstName && "text-red-500"
+                    errors.name && "text-red-500"
                   }`}>
-                  First name
+                  Name
                 </label>
-                {errors.firstName && (
-                  <span className='text-red-500'>{errors.firstName}</span>
+                {errors.name && (
+                  <span className='text-red-500'>{errors.name}</span>
                 )}
               </div>
               <div className='relative z-0 w-full mb-5 group'>
                 <input
                   type='text'
-                  name='lastName'
-                  value={formData.lastName}
+                  name='city'
+                  value={formData.city}
                   onChange={handleChange}
                   className='block py-2.5 px-0 w-full text-sm text-text bg-transparent border-0 border-b-2 border-zinc-700 appearance-none dark:text-text dark:border-text dark:focus:border-text focus:outline-none focus:ring-0 focus:border-text peer'
                   placeholder=' '
                   required
                 />
                 <label
-                  htmlFor='lastName'
+                  htmlFor='city'
                   className={`peer-focus:font-medium absolute text-sm text-text dark:text-text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-text peer-focus:dark:text-text peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 ${
-                    errors.lastName && "text-red-500"
+                    errors.city && "text-red-500"
                   }`}>
-                  Last name
+                  City
                 </label>
-                {errors.lastName && (
-                  <span className='text-red-500'>{errors.lastName}</span>
+                {errors.city && (
+                  <span className='text-red-500'>{errors.city}</span>
                 )}
               </div>
             </div>

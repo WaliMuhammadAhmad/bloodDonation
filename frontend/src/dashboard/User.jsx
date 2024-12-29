@@ -1,7 +1,7 @@
 import { useState } from "react";
 import RenderProfile from "./pages/RenderProfile";
-import RenderReview from "./pages/RenderReview";
 import RenderManageBloodAppeals from "./pages/RenderManageBloodAppeals";
+import RenderDonarRequests from "./pages/RenderDonarRequests";
 import RenderHome from "./pages/RenderHome";
 
 const theme = {
@@ -22,7 +22,7 @@ function User() {
   };
 
   return (
-    <div className='flex'>
+    <div className='flex h-auto overflow-y-scroll'>
       {/* Sidebar */}
       <div className='bg-background text-text w-64 flex-shrink-0'>
         <div className='py-6 pl-6 flex flex-col'>
@@ -43,6 +43,13 @@ function User() {
             </li>
             <li
               className={`${theme.SidebarItems} ${
+                selectedItem === "Donations" ? "bg-primary rounded-l-xl" : ""
+              }`}
+              onClick={() => handleItemClick("Donations")}>
+              Donation
+            </li>
+            <li
+              className={`${theme.SidebarItems} ${
                 selectedItem === "Review" ? "bg-primary rounded-l-xl" : ""
               }`}
               onClick={() => handleItemClick("Review")}>
@@ -59,11 +66,11 @@ function User() {
         </div>
       </div>
       {/* Content */}
-      <div className='flex-1 bg-primary rounded-l-xl p-10'>
+      <div className='flex-1 bg-primary rounded-l-xl p-10 '>
         {selectedItem === "Home" && <RenderHome role='user' />}
         {selectedItem === "Appeals" && <RenderManageBloodAppeals role='user' />}
-        {selectedItem === "Review" && <RenderReview role='user' />}
-        {selectedItem === "Profile" && <RenderProfile />}
+        {selectedItem === "Donations" && <RenderDonarRequests role='user' />}
+        {selectedItem === "Profile" && <RenderProfile role='user' />}
       </div>
     </div>
   );

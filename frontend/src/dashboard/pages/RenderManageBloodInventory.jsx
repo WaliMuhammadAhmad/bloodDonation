@@ -1,59 +1,80 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import bloodInventory from "../../data/content/bloodInventory";
-
-const theme = {
-  Card: "flex flex-col sm:flex-row justify-between items-center bg-background rounded-lg shadow-lg p-5 mb-5 w-full gap-4",
-  BloodType: "text-primary font-bold text-lg",
-  StockInfo: "text-text text-base",
-  Status: "text-secondary text-base",
-  Actions: "flex gap-4",
-};
+import { theme } from "./theme";
+import axios from "axios";
 
 function RenderManageBloodInventory() {
   const [inventory, setInventory] = useState(bloodInventory);
 
-  // Update stock
-  const updateStock = (id, newStock) => {
-    setInventory((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              stock: newStock,
-              status: newStock === 0 ? "Out of Inventory" : item.status,
-            }
-          : item
-      )
-    );
+  useEffect(() => {
+    const fetchInventory = async () => {
+      try {
+        const response = await axios.get("/api/blood-inventory");
+        if (response.data && response.data.length > 0) {
+          setInventory(response.data);
+        } else {
+          setInventory(bloodInventory);
+        }
+      } catch (error) {
+        console.error("Error fetching inventory:", error);
+        setInventory(bloodInventory);
+      }
+    };
+
+    fetchInventory();
+  }, []);
+
+  const updateStock = async (id, newStock) => {
+    try {
+      await axios.put(`/api/blood-inventory/${id}`, { stock: newStock });
+      setInventory((prev) =>
+        prev.map((item) =>
+          item.id === id
+            ? {
+                ...item,
+                stock: newStock,
+                status: newStock === 0 ? "Out of Inventory" : item.status,
+              }
+            : item
+        )
+      );
+    } catch (error) {
+      console.error("Error updating stock:", error);
+    }
   };
 
-  // Update status
-  const updateStatus = (id, newStatus) => {
-    setInventory((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, status: newStatus } : item
-      )
-    );
+  const updateStatus = async (id, newStatus) => {
+    try {
+      await axios.put(`/api/blood-inventory/${id}`, { status: newStatus });
+      setInventory((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, status: newStatus } : item
+        )
+      );
+    } catch (error) {
+      console.error("Error updating status:", error);
+    }
   };
 
-  // Delete item
-  const deleteItem = (id) => {
-    setInventory((prev) => prev.filter((item) => item.id !== id));
+  const deleteItem = async (id) => {
+    try {
+      await axios.delete(`/api/blood-inventory/${id}`);
+      setInventory((prev) => prev.filter((item) => item.id !== id));
+    } catch (error) {
+      console.error("Error deleting item:", error);
+    }
   };
 
   return (
     <div>
-      <div className='container flex flex-col gap-5 justify-start h-[85dvh]'>
+      <div className='container flex flex-col gap-5 justify-start'>
         <h1 className='font-condensed text-5xl font-bold text-text'>
           Manage Blood Inventory
         </h1>
         <div className='flex flex-col w-full gap-2 pt-5 rounded-xl bg-background items-center'>
           {inventory.map((item) => (
             <div key={item.id} className={theme.Card}>
-              {/* Blood Type */}
               <div className={theme.BloodType}>{item.type}</div>
-
-              {/* Stock and Status */}
               <div className='flex flex-col sm:flex-row items-center gap-4'>
                 <div className={theme.StockInfo}>
                   Stock: <span className='font-bold'>{item.stock} Units</span>
@@ -62,15 +83,13 @@ function RenderManageBloodInventory() {
                   Status: <span className='font-bold'>{item.status}</span>
                 </div>
               </div>
-
-              {/* Actions */}
               <div className={theme.Actions}>
-                {/* Update Stock */}
                 <label className='input input-bordered flex items-center gap-2'>
                   <input
                     type='number'
                     className='grow'
                     placeholder='Units'
+                    value={item.stock}
                     onChange={(e) => {
                       const value = parseInt(e.target.value, 10);
                       if (!isNaN(value)) updateStock(item.id, value);
@@ -78,8 +97,6 @@ function RenderManageBloodInventory() {
                   />
                   <span className='badge badge-error'>Liters</span>
                 </label>
-
-                {/* Update Status */}
                 <select
                   className='select select-bordered w-full max-w-xs'
                   onChange={(e) => updateStatus(item.id, e.target.value)}
@@ -90,7 +107,6 @@ function RenderManageBloodInventory() {
                   <option>Out of Inventory</option>
                   <option>Not Available</option>
                 </select>
-
                 <button
                   className='btn btn-error'
                   onClick={() => deleteItem(item.id)}>

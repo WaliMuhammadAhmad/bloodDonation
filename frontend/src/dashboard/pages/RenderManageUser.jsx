@@ -1,11 +1,6 @@
-import { useState } from "react";
-
-const theme = {
-  ListItem:
-    "flex justify-between items-center p-4 border rounded-lg bg-background shadow-md gap-4",
-  SectionTitle: "text-text text-2xl font-bold py-2",
-  ActionButton: "btn btn-sm",
-};
+import { useState, useEffect } from "react";
+import { theme } from "./theme";
+import axios from "axios";
 
 const dummyUsers = [
   {
@@ -34,9 +29,31 @@ const dummyUsers = [
 function RenderManageUser() {
   const [users, setUsers] = useState(dummyUsers);
 
-  // CRUD Functions
-  const deleteUser = (id) => {
-    setUsers((prev) => prev.filter((user) => user.id !== id));
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get("/api/users");
+        if (response.data && response.data.length > 0) {
+          setUsers(response.data);
+        } else {
+          setUsers(dummyUsers);
+        }
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        setUsers(dummyUsers);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  const deleteUser = async (id) => {
+    try {
+      await axios.delete(`/api/users/${id}`);
+      setUsers((prev) => prev.filter((user) => user.id !== id));
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
   };
 
   return (
@@ -45,7 +62,6 @@ function RenderManageUser() {
       <div className='flex flex-col gap-3'>
         {users.map((user) => (
           <div key={user.id} className={theme.ListItem}>
-            {/* User Details */}
             <div className='flex flex-col gap-1 text-text'>
               <p>
                 <span className='font-bold'>Name:</span> {user.name}
@@ -60,15 +76,12 @@ function RenderManageUser() {
                 <span className='font-bold'>City:</span> {user.city}
               </p>
             </div>
-
-            {/* Actions */}
             <div className='flex gap-2'>
               <button
                 className={`${theme.ActionButton} btn-error`}
                 onClick={() => deleteUser(user.id)}>
                 Delete
               </button>
-              {/* Add Update Logic Here */}
             </div>
           </div>
         ))}

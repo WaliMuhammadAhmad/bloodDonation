@@ -21,7 +21,7 @@ function Admin() {
   };
 
   return (
-    <div className='flex'>
+    <div className='flex h-auto overflow-y-scroll'>
       {/* Sidebar */}
       <div className='bg-background text-text w-64 flex-shrink-0'>
         <div className='py-6 pl-6 flex flex-col'>
@@ -89,7 +89,7 @@ function Admin() {
         </div>
       </div>
       {/* Content */}
-      <div className='flex-1 bg-primary rounded-l-xl p-10 min-h-[80dvh] h-auto overflow-y-scroll'>
+      <div className='flex-1 bg-primary rounded-l-xl p-10'>
         {selectedItem === "Home" && <RenderHome role='admin' />}
         {selectedItem === "Manage Blood Appeals" && (
           <RenderManageBloodAppeals role='admin' />
@@ -102,7 +102,7 @@ function Admin() {
         )}
         {selectedItem === "Manage Donors" && <RenderManageDonors />}
         {selectedItem === "Manage Users" && <RenderManageUser />}
-        {selectedItem === "Manage Profile" && <RenderProfile />}
+        {selectedItem === "Manage Profile" && <RenderProfile role='admin' />}
       </div>
     </div>
   );

@@ -1,11 +1,6 @@
-import { useState } from "react";
-
-const theme = {
-  ProjectCards:
-    "flex p-4 justify-between items-center border rounded-xl bg-background gap-4",
-  SectionTitle: "text-text text-2xl font-bold py-2",
-  ActionButton: "btn btn-sm",
-};
+import { useState, useEffect } from "react";
+import { theme } from "./theme";
+import axios from "axios";
 
 const dummyAppeals = [
   {
@@ -44,36 +39,70 @@ const dummyAppeals = [
 function RenderManageBloodAppeals({ role }) {
   const [appeals, setAppeals] = useState(dummyAppeals);
 
-  // Cancel Appeal (only for non-admin roles)
-  const cancelAppeal = (id) => {
-    setAppeals((prev) =>
-      prev.map((appeal) =>
-        appeal.id === id ? { ...appeal, status: "Cancelled" } : appeal
-      )
-    );
+  useEffect(() => {
+    const fetchAppeals = async () => {
+      try {
+        const response = await axios.get("/api/blood-appeals");
+        if (response.data && response.data.length > 0) {
+          setAppeals(response.data);
+        } else {
+          setAppeals(dummyAppeals);
+        }
+      } catch (error) {
+        console.error("Error fetching appeals:", error);
+        setAppeals(dummyAppeals);
+      }
+    };
+
+    fetchAppeals();
+  }, []);
+
+  const cancelAppeal = async (id) => {
+    try {
+      await axios.put(`/api/blood-appeals/${id}`, { status: "Cancelled" });
+      setAppeals((prev) =>
+        prev.map((appeal) =>
+          appeal.id === id ? { ...appeal, status: "Cancelled" } : appeal
+        )
+      );
+    } catch (error) {
+      console.error("Error cancelling appeal:", error);
+    }
   };
 
-  // Approve Appeal (only for admin role)
-  const approveAppeal = (id) => {
-    setAppeals((prev) =>
-      prev.map((appeal) =>
-        appeal.id === id ? { ...appeal, status: "Approved" } : appeal
-      )
-    );
+  const approveAppeal = async (id) => {
+    try {
+      await axios.put(`/api/blood-appeals/${id}`, { status: "Approved" });
+      setAppeals((prev) =>
+        prev.map((appeal) =>
+          appeal.id === id ? { ...appeal, status: "Approved" } : appeal
+        )
+      );
+    } catch (error) {
+      console.error("Error approving appeal:", error);
+    }
   };
 
-  // Reject Appeal (only for admin role)
-  const rejectAppeal = (id) => {
-    setAppeals((prev) =>
-      prev.map((appeal) =>
-        appeal.id === id ? { ...appeal, status: "Rejected" } : appeal
-      )
-    );
+  const rejectAppeal = async (id) => {
+    try {
+      await axios.put(`/api/blood-appeals/${id}`, { status: "Rejected" });
+      setAppeals((prev) =>
+        prev.map((appeal) =>
+          appeal.id === id ? { ...appeal, status: "Rejected" } : appeal
+        )
+      );
+    } catch (error) {
+      console.error("Error rejecting appeal:", error);
+    }
   };
 
-  // Delete Appeal (only for admin role)
-  const deleteAppeal = (id) => {
-    setAppeals((prev) => prev.filter((appeal) => appeal.id !== id));
+  const deleteAppeal = async (id) => {
+    try {
+      await axios.delete(`/api/blood-appeals/${id}`);
+      setAppeals((prev) => prev.filter((appeal) => appeal.id !== id));
+    } catch (error) {
+      console.error("Error deleting appeal:", error);
+    }
   };
 
   const renderAppeals = (status) =>
@@ -81,7 +110,6 @@ function RenderManageBloodAppeals({ role }) {
       .filter((appeal) => appeal.status === status)
       .map((appeal) => (
         <div key={appeal.id} className={theme.ProjectCards}>
-          {/* Appeal Details */}
           <div className='flex flex-col gap-1 text-text'>
             <p>
               <span className='font-bold'>User:</span> {appeal.user}
@@ -103,8 +131,6 @@ function RenderManageBloodAppeals({ role }) {
               <span className='font-bold'>Priority:</span> {appeal.priority}
             </p>
           </div>
-
-          {/* Actions */}
           <div className='flex gap-2'>
             {role === "admin" && status === "Pending" && (
               <>
@@ -154,19 +180,14 @@ function RenderManageBloodAppeals({ role }) {
 
   return (
     <div className='flex flex-col gap-5 h-full'>
-      {/* Pending Appeals */}
       <div className='w-full'>
         <h2 className={theme.SectionTitle}>Pending Appeals</h2>
         <div className='flex flex-col gap-3'>{renderAppeals("Pending")}</div>
       </div>
-
-      {/* Approved Appeals */}
       <div className='w-full'>
         <h2 className={theme.SectionTitle}>Approved Appeals</h2>
         <div className='flex flex-col gap-3'>{renderAppeals("Approved")}</div>
       </div>
-
-      {/* Rejected Appeals */}
       <div className='w-full'>
         <h2 className={theme.SectionTitle}>Rejected Appeals</h2>
         <div className='flex flex-col gap-3'>{renderAppeals("Rejected")}</div>

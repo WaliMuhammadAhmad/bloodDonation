@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { SuccessAlert, ErrorAlert } from "../../components/common/Alerts";
 import axios from "axios";
 
-function RenderProfile() {
+// eslint-disable-next-line react/prop-types
+function RenderProfile({ role }) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
 
@@ -21,17 +22,26 @@ function RenderProfile() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get("/admin");
-        if (response.data.success) {
-          const userData = response.data.data;
+        const storedUser = JSON.parse(localStorage.getItem("user"));
+        if (storedUser) {
           setUserInfo({
-            firstName: userData.firstName,
-            lastName: userData.lastName,
-            password: userData.password,
-            pic: userData.pic,
+            firstName: storedUser.firstName || "",
+            lastName: storedUser.lastName || "",
+            password: "",
           });
         } else {
-          console.error("Failed to fetch user data:", response.data.message);
+          const endpoint = role === "admin" ? "/admin" : "/user";
+          const response = await axios.get(endpoint);
+          if (response.data.success) {
+            const userData = response.data.data;
+            setUserInfo({
+              firstName: userData.firstName,
+              lastName: userData.lastName,
+              password: "",
+            });
+          } else {
+            console.error("Failed to fetch user data:", response.data.message);
+          }
         }
       } catch (error) {
         console.error("Error:", error);
@@ -39,7 +49,7 @@ function RenderProfile() {
     };
 
     fetchUserData();
-  }, []);
+  }, [role]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -85,11 +95,17 @@ function RenderProfile() {
 
   const handleSubmitforProfile = async (e) => {
     e.preventDefault();
-    if (userInfo) {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const userId = storedUser ? storedUser._id : null;
+
+    if (userId) {
       try {
-        const response = await axios.put(`/user/${userInfo._id}`, userInfo);
-        // (response.data);
+        const endpoint =
+          role === "admin" ? `/admin/${userId}` : `/user/${userId}`;
+        const response = await axios.put(endpoint, userInfo);
         if (response.data.success) {
+          const updatedUser = { ...storedUser, ...userInfo };
+          localStorage.setItem("user", JSON.stringify(updatedUser));
           setShowSuccess(true);
           setTimeout(() => setShowSuccess(false), 5000);
         } else {
@@ -157,7 +173,7 @@ function RenderProfile() {
           </div>
 
           <input
-            className='border w-1/4 p-2 bg-background text-text rounded-xl hover:invert'
+            className='border w-1/4 p-2 bg-background text-text rounded-lg hover:invert'
             type='submit'
             value='Update Profile'
           />

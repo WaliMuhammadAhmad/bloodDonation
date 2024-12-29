@@ -33,7 +33,9 @@ public class BloodAppeal {
 
     @Column
     private String remarks;
-    
+    @Column(nullable = false)
+    private String description;  // Description for why the blood is being requested
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -52,6 +54,13 @@ public class BloodAppeal {
     }
 
     // Getters and Setters
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
     public int getAppealID() {
         return appealID;
     }

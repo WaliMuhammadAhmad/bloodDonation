@@ -97,6 +97,17 @@ public ResponseEntity<List<DonationRequest>> getDonationRequestsByStatus(String 
     return adminService.getDonationRequestsByStatus(status);
 }
 
+//===============Manage Inventory==============
+//---------Add Blood to Inventory
+public ResponseEntity<String> addBloodToInventory(Map<String, Object> requestMap) {
+    return adminService.addBloodToInventory(requestMap);
+}
+//---------Remove Blood from Inventory
+public ResponseEntity<String> removeBloodFromInventory(Map<String, Object> requestMap) {
+    return adminService.removeBloodFromInventory(requestMap);
+}
+
+//==========ViewBloodInventory by City
 
 
 }

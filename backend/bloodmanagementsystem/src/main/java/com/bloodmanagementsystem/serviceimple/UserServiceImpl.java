@@ -169,32 +169,45 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<String> makeBloodAppeal(Map<String, String> requestMap) {
         try {
+            // Extracting values from requestMap
             int userId = Integer.parseInt(requestMap.get("userId"));
             int bloodGroupId = Integer.parseInt(requestMap.get("bloodGroupId"));
             String location = requestMap.get("location");
             int quantity = Integer.parseInt(requestMap.get("quantity"));
+            String description = requestMap.get("description");  // New description field
 
+            // Fetching User and BloodGroup from the database
             Optional<User> user = userDao.findById(userId);
             Optional<BloodGroup> bloodGroup = bloodGroupRepository.findById(bloodGroupId);
 
             if (user.isPresent() && bloodGroup.isPresent()) {
+                // Creating a new BloodAppeal object
                 BloodAppeal appeal = new BloodAppeal();
                 appeal.setUser(user.get());
                 appeal.setBloodGroup(bloodGroup.get());
                 appeal.setLocation(location);
                 appeal.setQuantity(quantity);
-                appeal.setStatus(Status.PENDING);
+                appeal.setDescription(description);  // Setting description
+                appeal.setStatus(Status.PENDING);  // Default status
 
+                // Saving the appeal to the database
                 bloodAppealRepository.save(appeal);
+
+                // Returning success response
                 return new ResponseEntity<>("Blood appeal request created successfully", HttpStatus.OK);
             } else {
+                // Handling case where user or blood group is invalid
                 return new ResponseEntity<>("Invalid user or blood group ID", HttpStatus.BAD_REQUEST);
             }
         } catch (Exception e) {
+            // Printing stack trace for debugging
             e.printStackTrace();
+            
+            // Returning error response in case of exception
             return new ResponseEntity<>("Error creating blood appeal", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 //  -----------service to make donation request
     
     @Override

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.bloodmanagementsystem.wrapper.UserWrapper;
 import com.bloodmanagementsystem.Model.BloodAppeal;
+import com.bloodmanagementsystem.Model.BloodInventory;
 import com.bloodmanagementsystem.Model.DonationRequest;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,13 @@ public interface AdminService {
     ResponseEntity<List<BloodAppeal>> getAllBloodAppeals();
     ResponseEntity<List<BloodAppeal>> getBloodAppealsByStatus(String status);
     
-	 //  abstract function  for Viewing Blood-Donation Requests
+	 //  abstract functions  for Viewing Blood-Donation Requests
     ResponseEntity<List<DonationRequest>> getAllDonationRequests();
     ResponseEntity<List<DonationRequest>> getDonationRequestsByStatus(String status);
+    
+	 //  abstract functions  for Managing Blood Inventory
+    ResponseEntity<String> addBloodToInventory(Map<String, Object> requestMap);
+    ResponseEntity<String> removeBloodFromInventory(Map<String, Object> requestMap);
+    
+  //==========ViewBloodInventory by City
 }

@@ -63,7 +63,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 UserDetails userDetails = customerUserDetailsService.loadUserByUsername(username);
                 if (jwtUtils.validateToken(token, userDetails)) {
                     log.info("Token is valid: {}", jwtUtils.validateToken(token, userDetails));
-                    log.info("User role: {}", isAdmin() ? "admin" : "not admin");
+                   // log.info("User role: {}", isAdmin() ? "admin" : "not admin");
 
 //                    String role = jwtUtils.extractRole(token);
 //                    log.info("Extracted role from token: {}", role);

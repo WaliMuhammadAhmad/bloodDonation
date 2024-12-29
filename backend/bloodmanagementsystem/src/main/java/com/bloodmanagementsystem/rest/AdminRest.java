@@ -49,4 +49,11 @@ public interface AdminRest {
   @GetMapping("/donation-requests/status/{status}")
   public ResponseEntity<List<DonationRequest>> getDonationRequestsByStatus(@PathVariable String status);
   
+//--------Manage Inventory
+  @PostMapping("/add")
+  public ResponseEntity<String> addBloodToInventory(@RequestBody Map<String, Object> requestMap);
+  @PostMapping("/remove")
+  public ResponseEntity<String> removeBloodFromInventory(@RequestBody Map<String, Object> requestMap);
+  
+  
 }

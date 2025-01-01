@@ -49,8 +49,8 @@ export default function Form() {
     if (formValid) {
       try {
         const requestMap = {
-          Email: formData.email,
-          Password: formData.password,
+          email: formData.email,
+          password: formData.password,
         };
         console.log(requestMap);
 

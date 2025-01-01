@@ -39,7 +39,7 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/user/login", "/user/signup", "/user/forgotPassword","admin/login").permitAll()
+                        .requestMatchers("/user/login", "/user/signup", "/user/forgotPassword","admin/login","/user/donationrequest").permitAll()
 
                         .anyRequest().authenticated()
                 )

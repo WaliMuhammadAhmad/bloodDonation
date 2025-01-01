@@ -90,10 +90,10 @@ function SignUp() {
     if (formValid) {
       try {
         const requestMap = {
-          Name: formData.name,
-          Email: formData.email,
-          City: formData.city,
-          Password: formData.password,
+          name: formData.name,
+          email: formData.email,
+          city: formData.city,
+          password: formData.password,
         };
         console.log(requestMap);
         const response = await axios.post("/user/signup", requestMap);

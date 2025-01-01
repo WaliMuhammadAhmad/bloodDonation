@@ -53,8 +53,8 @@ function SignIn() {
     if (formValid) {
       try {
         const requestMap = {
-          Email: formData.email,
-          Password: formData.password,
+          email: formData.email,
+          password: formData.password,
         };
         console.log(requestMap);
         const response = await axios.post("/user/login", requestMap);

@@ -1,16 +1,16 @@
 package com.bloodmanagementsystem.restimple;
 
+import com.bloodmanagementsystem.Config.JwtUtils;
+import com.bloodmanagementsystem.Config.Log;
+import com.bloodmanagementsystem.Model.Admin;
 import com.bloodmanagementsystem.Model.BloodAppeal;
 import com.bloodmanagementsystem.Model.DonationRequest;
-import com.bloodmanagementsystem.constents.CafeConstants;
+import com.bloodmanagementsystem.constants.constants;
 import com.bloodmanagementsystem.rest.AdminRest;
-import com.bloodmanagementsystem.rest.UserRest;
 import com.bloodmanagementsystem.service.AdminService;
 import com.bloodmanagementsystem.service.UserService;
-import com.bloodmanagementsystem.untils.Utils;
+import com.bloodmanagementsystem.utils.Utils;
 import com.bloodmanagementsystem.wrapper.UserWrapper;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,87 +27,121 @@ public class AdminRestImpl implements AdminRest {
 	    AdminService adminService;
 	    @Autowired
 	    UserService userService;
+	    @Autowired
+	    private JwtUtils jwtUtils;
 	   //---------Api implementation for login
     @Override
     public ResponseEntity<String> login(Map<String, String> requestMap) {
-        try {
-        	System.out.println(requestMap);
-            return adminService.login(requestMap);
+        	try {
+        		Log.logApiRequest("POST", "/admin/login");
+           	 // Extract email and password from the request body
+               String email = requestMap.get("email");
+               String password = requestMap.get("password");
 
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+               if (email == null || password == null) {
+                   return ResponseEntity.badRequest().body("Email and password are required");
+               }
 
-        return Utils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+               // Authenticate the user
+               Admin authenticatedUser = adminService.login(requestMap);
+               if (authenticatedUser != null) {
+                   // Generate JWT token
+                   String token = jwtUtils.generateToken(email);
+
+                   // Prepare JSON response
+                   String jsonResponse = String.format("{\"token\": \"%s\", \"user\": %s}", 
+                       token, authenticatedUser);
+
+                   // Return token and user details
+                   return ResponseEntity.ok(jsonResponse);
+               }
+               
+               // If authentication fails
+               return ResponseEntity.status(401).body("Invalid email or password");
+
+           } catch (Exception ex) {
+               Log.logError("An error occurred while processing the request.", ex);
+               ex.printStackTrace();
+           }
+
+           return Utils.getResponseEntity(constants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
     
 //  ----------------------- Donation Request Handeling
     
 @Override
 public ResponseEntity<String> approveDonationRequest(int id, Map<String, String> requestMap) {
-    String adminRemarks = requestMap.get("remarks");
-    adminService.approveDonationRequest(id, adminRemarks);
-    return ResponseEntity.ok("Donation request approved successfully.");
+	Log.logApiRequest("POST", "/admin/donationrequest/approve/" + id);
+	return adminService.approveDonationRequest(id, requestMap.get("remarks"));
 }
 
 @Override
 public ResponseEntity<String> rejectDonationRequest(int id, Map<String, String> requestMap) {
-    String adminRemarks = requestMap.get("remarks");
-    adminService.rejectDonationRequest(id, adminRemarks);
-    return ResponseEntity.ok("Donation request rejected successfully.");
+	Log.logApiRequest("POST", "/admin/donationrequest/reject/" + id);
+
+	return adminService.rejectDonationRequest(id, requestMap.get("remarks"));
 }
 
 //---------Api implementation for Blood Appeal Requests Handelling
 
 @Override
-public ResponseEntity<String> approveBloodAppeal(int id) {
-    return adminService.approveBloodAppeal(id);
+public ResponseEntity<String> approveBloodAppeal(int id,  Map<String, String> requestMap) {
+	Log.logApiRequest("POST", "/admin/bloodappeal/approve/" + id);
+	return adminService.approveBloodAppeal(id, requestMap.get("remarks"));
 }
 @Override
 public ResponseEntity<String> rejectBloodAppeal(int id, Map<String, String> requestMap) {
-    return adminService.rejectBloodAppeal(id, requestMap.get("remarks"));
+	Log.logApiRequest("POST", "/admin/bloodappeal/reject/" + id);
+
+	return adminService.rejectBloodAppeal(id, requestMap.get("remarks"));
 }
 
 //---------Api implementation for get all users
 @Override
 public ResponseEntity<List<UserWrapper>> getAllUser() {
     try {
+    	Log.logApiRequest("GET", "/admin/getusers");
         List<UserWrapper> userList = userService.getAllUser().getBody();
         System.out.println("Controller Response: " + userList);
         return new ResponseEntity<>(userList, HttpStatus.OK);
     } catch (Exception e) {
+        Log.logError("An error occurred while processing the request.", e);
         e.printStackTrace();
         return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
 //--------Api implementation for Viewing Blood-Appeal Requests
 public ResponseEntity<List<BloodAppeal>> getAllBloodAppeals() {
+	Log.logApiRequest("GET", "/admin/bloodappeals");
     return adminService.getAllBloodAppeals();
 }
 
 public ResponseEntity<List<BloodAppeal>> getBloodAppealsByStatus(String status) {
-    return adminService.getBloodAppealsByStatus(status);
+	Log.logApiRequest("GET", "/admin/bloodappeals/status/"+status);
+	return adminService.getBloodAppealsByStatus(status);
 }
 
 //--------Api implementation for Viewing Blood-Donation Requests
 public ResponseEntity<List<DonationRequest>> getAllDonationRequests() {
-    return adminService.getAllDonationRequests();
+	Log.logApiRequest("GET", "/admin/donationrequests");
+	return adminService.getAllDonationRequests();
 }
 public ResponseEntity<List<DonationRequest>> getDonationRequestsByStatus(String status) {
-    return adminService.getDonationRequestsByStatus(status);
+	Log.logApiRequest("GET", "/admin/donationrequests/status/"+status);
+	return adminService.getDonationRequestsByStatus(status);
 }
 
 //===============Manage Inventory==============
 //---------Add Blood to Inventory
 public ResponseEntity<String> addBloodToInventory(Map<String, Object> requestMap) {
+	Log.logApiRequest("POST", "/admin/addblood");
     return adminService.addBloodToInventory(requestMap);
 }
 //---------Remove Blood from Inventory
 public ResponseEntity<String> removeBloodFromInventory(Map<String, Object> requestMap) {
-    return adminService.removeBloodFromInventory(requestMap);
+	Log.logApiRequest("POST", "/admin/removeblood");
+	return adminService.removeBloodFromInventory(requestMap);
 }
-
-//==========ViewBloodInventory by City
 
 
 }

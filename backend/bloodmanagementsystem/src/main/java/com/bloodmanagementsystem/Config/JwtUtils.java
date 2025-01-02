@@ -1,14 +1,12 @@
-package com.bloodmanagementsystem.JWT;
+package com.bloodmanagementsystem.Config;
 
 
-import com.bloodmanagementsystem.serviceimple.UserServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -24,10 +22,14 @@ public class JwtUtils {
 
 //    ----secret key to on which our json token will be generated
 private final Key secret = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-
+	
 //    function extract username from the token
     public String extractUsername(String token){
         return extractClaims(token,Claims::getSubject);
+    }
+
+    public String extractEmail(String token) {
+        return Jwts.parserBuilder().setSigningKey(secret).build().parseClaimsJws(token).getBody().getSubject();
     }
 
 //    function to extract expirations from the token
@@ -53,6 +55,7 @@ private boolean isTokenExpired(String token) {
         Date expiration = extractExpiration(token);
         return expiration != null && expiration.before(new Date());
     } catch (Exception ex) {
+        Log.logError("An error occurred while processing the request.", ex);
         log.error("Error checking token expiration: {}", ex.getMessage());
         return true;
     }
@@ -76,14 +79,14 @@ private boolean isTokenExpired(String token) {
     }
 
 //    function to validate the token
-public boolean validateToken(String token, UserDetails userDetails) {
+public boolean validateToken(String token, String userDetails) {
     try {
         final String username = extractUsername(token);
         if (username == null) {
             log.warn("Extracted username is null.");
             return false;
         }
-        if (!username.equals(userDetails.getUsername())) {
+        if (!username.equals(userDetails)) {
             log.warn("Token username does not match userDetails.");
             return false;
         }
@@ -104,3 +107,4 @@ public boolean validateToken(String token, UserDetails userDetails) {
     }
 
 }
+

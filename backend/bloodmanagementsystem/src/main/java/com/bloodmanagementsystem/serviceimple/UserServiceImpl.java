@@ -1,24 +1,24 @@
 package com.bloodmanagementsystem.serviceimple;
 
 import com.google.common.base.Strings;
-import com.bloodmanagementsystem.JWT.CustomerUserDetailsService;
-import com.bloodmanagementsystem.JWT.JwtFilter;
-import com.bloodmanagementsystem.JWT.JwtUtils;
+import com.bloodmanagementsystem.Config.CustomerUserDetailsService;
+import com.bloodmanagementsystem.Config.JwtFilter;
+import com.bloodmanagementsystem.Config.JwtUtils;
+import com.bloodmanagementsystem.Config.Log;
 import com.bloodmanagementsystem.Model.BloodAppeal;
 import com.bloodmanagementsystem.Model.BloodGroup;
 import com.bloodmanagementsystem.Model.DonationRequest;
 import com.bloodmanagementsystem.Model.Status;
 import com.bloodmanagementsystem.Model.User;
-import com.bloodmanagementsystem.constents.CafeConstants;
+import com.bloodmanagementsystem.constants.constants;
 import com.bloodmanagementsystem.DAO.BloodAppealRepository;
 import com.bloodmanagementsystem.DAO.BloodGroupRepository;
 import com.bloodmanagementsystem.DAO.DonationRequestRepository;
 import com.bloodmanagementsystem.DAO.UserDao;
 
 import com.bloodmanagementsystem.service.UserService;
-import com.bloodmanagementsystem.untils.Utils;
+import com.bloodmanagementsystem.utils.Utils;
 
-import lombok.extern.slf4j.Slf4j;
 //import com.bloodmanagementsystem.untils.EmailUtils;
 import com.bloodmanagementsystem.wrapper.UserWrapper;
 import org.slf4j.Logger;
@@ -27,16 +27,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-
-//  User service class which implements Category user interface
-//@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -84,12 +78,13 @@ public class UserServiceImpl implements UserService {
                 }
 
             } else {
-                return Utils.getResponseEntity(CafeConstants.INVALID_DATA, HttpStatus.BAD_REQUEST);
+                return Utils.getResponseEntity(constants.INVALID_DATA, HttpStatus.BAD_REQUEST);
             }
         }catch (Exception ex){
+            Log.logError("An error occurred while processing the request.", ex);
             ex.printStackTrace();
         }
-        return Utils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG,HttpStatus.INTERNAL_SERVER_ERROR);
+        return Utils.getResponseEntity(constants.SOMETHING_WENT_WRONG,HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 
@@ -115,40 +110,32 @@ public class UserServiceImpl implements UserService {
 
     //    -----------service of login
     @Override
-    public ResponseEntity<String> login(Map<String, String> requestMap) {
-        log.info("Inside login!");
-        try{
-            log.info("Authenticating user: {}", requestMap.get("email"));
-            Authentication auth=authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(requestMap.get("email"),requestMap.get("password"))
-            );
-            log.info("Authentication result: {}", auth.isAuthenticated());
-            if (auth.isAuthenticated()){
-              //  if(customerUserDetailsService.getUserDetail().getStatus().equalsIgnoreCase("true")){
-                    return new ResponseEntity<String>("{\"token\":\""+
-                            jwtUtils.generateToken(customerUserDetailsService.getUserDetail().getEmail()),HttpStatus.OK);
-              //  }
-             //   else {
-              //      return new ResponseEntity<String>("{\"message\":\""+"Wait For Admin Approval"+"\"}", HttpStatus.BAD_REQUEST);
-              //  }
+    public User login(Map<String, String> requestMap) {
+        // Extract email and password from the map
+        String email = requestMap.get("email");
+        String password = requestMap.get("password");
 
-            }
-
-        }catch (Exception ex){
-            log.error("Error during authentication: {}", ex.getMessage());
-
+        if (email == null || password == null) {
+            throw new IllegalArgumentException("Email and password are required");
         }
 
-        return new ResponseEntity<String>("{\"message\":\""+"Bad Credentials."+"\"}", HttpStatus.BAD_REQUEST);
+        // Authenticate the user
+        Optional<User> user = userDao.findByEmail(email);
+        if (user.isPresent() && user.get().getPassword().equals(password)) {
+            return user.get(); // Return the authenticated user
+        }
+
+        throw new IllegalArgumentException("Invalid email or password"); // Or a custom exception
     }
+
 
 
 //
     //    -----------service of get all user
     @Override
     public ResponseEntity<List<UserWrapper>> getAllUser() {
-        log.info("Checking if user has admin privileges.");
-        log.info("Authentication context: {}", SecurityContextHolder.getContext().getAuthentication());
+//        log.info("Checking if user has admin privileges.");
+//        log.info("Authentication context: {}", SecurityContextHolder.getContext().getAuthentication());
 
         try{
       //      if (jwtFilter.isAdmin()){
@@ -161,6 +148,7 @@ public class UserServiceImpl implements UserService {
 //                return new ResponseEntity<>(new ArrayList<>(),HttpStatus.UNAUTHORIZED);
 //            }
         }catch (Exception ex){
+            Log.logError("An error occurred while processing the request.", ex);
             ex.printStackTrace();
         }
         return  new ResponseEntity<>(new ArrayList<>(),HttpStatus.INTERNAL_SERVER_ERROR);
@@ -200,6 +188,7 @@ public class UserServiceImpl implements UserService {
                 return new ResponseEntity<>("Invalid user or blood group ID", HttpStatus.BAD_REQUEST);
             }
         } catch (Exception e) {
+            Log.logError("An error occurred while processing the request.", e);
             // Printing stack trace for debugging
             e.printStackTrace();
             
@@ -232,99 +221,6 @@ public class UserServiceImpl implements UserService {
 
         // Save and return the created request
         return donationRequestRepository.save(donationRequest);
-    }
-    
-    
-   
-//    //      -----------service to update user
-//    @Override
-//    public ResponseEntity<String> update(Map<String, String> requestMap) {
-//        try{
-//
-//            if(jwtFilter.isAdmin()){
-//              Optional<User> optional= userDao.findById(Integer.parseInt(requestMap.get("id")));
-//              if(!optional.isEmpty()){
-//                  userDao.updateStatus(requestMap.get("status"),Integer.parseInt(requestMap.get("id")));
-//                  sendMailToAllAdmin(requestMap.get("status"),optional.get().getEmail(),userDao.getAllAdmin());
-//                  return CafeUtils.getResponseEntity("User updated successfully ",HttpStatus.OK);
-//
-//              }else {
-//                  return CafeUtils.getResponseEntity("User id does not exist",HttpStatus.OK);
-//              }
-//            }else{
-//                return CafeUtils.getResponseEntity(CafeConstants.UNAUTHORIZED,HttpStatus.UNAUTHORIZED);
-//            }
-//        }catch (Exception ex){
-//            ex.printStackTrace();
-//        }
-//        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG,HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
-//
-//
-//    //    method to send the email
-//    private void sendMailToAllAdmin(String status, String user, List<String> allAdmin) {
-//        allAdmin.remove(jwtFilter.getCurrentUser());
-//        if (status!=null&&status.equalsIgnoreCase("true")){
-//            emailUtils.sendSimpleMessage(jwtFilter.getCurrentUser(),"Account Approved","USER:- "+user+"\n is approved by \n ADMIN:- "+jwtFilter.getCurrentUser(),allAdmin);
-//        }else{
-//            emailUtils.sendSimpleMessage(jwtFilter.getCurrentUser(),"Account Disabled","USER:- "+user+"\n is disabled by \n ADMIN:- "+jwtFilter.getCurrentUser(),allAdmin);
-//        }
-//
-//
-//    }
-//
-//
-//
-//    //      -----------service to check token
-//    @Override
-//    public ResponseEntity<String> checkToken() {
-//        return CafeUtils.getResponseEntity("true",HttpStatus.OK);
-//
-//    }
-//
-//
-// //    -----------service to change password
-//    @Override
-//    public ResponseEntity<String> changePassword(Map<String, String> requestMap) {
-//        try{
-//            User userObj=userDao.findByEmail(jwtFilter.getCurrentUser());
-//            if (userObj != null){
-//                if (userObj.getPassword().equals(requestMap.get("oldPassword"))){
-//                    userObj.setPassword(requestMap.get("newPassword"));
-//                    userDao.save(userObj);
-//                    return CafeUtils.getResponseEntity("Password Updated Successfully",HttpStatus.OK);
-//
-//                }
-//                return CafeUtils.getResponseEntity("Incorrect old Password",HttpStatus.BAD_REQUEST);
-//
-//            }
-//
-//
-//            return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG,HttpStatus.INTERNAL_SERVER_ERROR);
-//
-//        }catch (Exception ex){
-//            ex.printStackTrace();
-//        }
-//        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG,HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
-//
-//
-//    //    -----------service to forgot password
-//    @Override
-//    public ResponseEntity<String> forgotPassword(Map<String, String> requestMap) {
-//       try{
-//           User user=userDao.findByEmail(requestMap.get("email"));
-//           if (!Objects.isNull(user)&& !Strings.isNullOrEmpty(user.getEmail())){
-//               emailUtils.forgotMail(user.getEmail(), "Credentials by Cafe Management System",user.getPassword());
-//           }
-//           return CafeUtils.getResponseEntity("Check your mail for Credentials",HttpStatus.OK);
-//
-//       }catch (Exception ex){
-//           ex.printStackTrace();
-//       }
-//        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG,HttpStatus.INTERNAL_SERVER_ERROR);
-//
-//    }
-//
+    }    
 
 }

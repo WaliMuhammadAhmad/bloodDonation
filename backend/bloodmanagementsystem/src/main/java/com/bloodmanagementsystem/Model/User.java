@@ -1,18 +1,13 @@
 package com.bloodmanagementsystem.Model;
 
 import jakarta.persistence.*;
-//import lombok.Data;
-//import lombok.Getter;
-//import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
+
 
 
 //@Data

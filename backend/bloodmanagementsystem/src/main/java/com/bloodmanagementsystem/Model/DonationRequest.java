@@ -40,8 +40,6 @@ public class DonationRequest {
     @Column(nullable = true)
     private String adminRemarks;
     
-    
-    
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();

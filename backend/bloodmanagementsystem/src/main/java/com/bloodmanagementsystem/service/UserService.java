@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import com.bloodmanagementsystem.wrapper.UserWrapper;
 import com.bloodmanagementsystem.Model.DonationRequest;
+import com.bloodmanagementsystem.Model.User;
+
 import java.util.List;
 import java.util.Map;
 
@@ -18,8 +20,7 @@ public interface UserService {
     ResponseEntity<String> signUp(Map<String, String> requestMap);
 
     //  abstract function  for login
-    ResponseEntity<String> login(Map<String, String> requestMap);
-
+    User login(Map<String, String> requestMap);
     //  abstract function  for get user
     ResponseEntity<List<UserWrapper>> getAllUser();
 

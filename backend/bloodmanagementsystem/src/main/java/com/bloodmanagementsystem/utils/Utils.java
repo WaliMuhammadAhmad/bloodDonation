@@ -1,4 +1,4 @@
-package com.bloodmanagementsystem.untils;
+package com.bloodmanagementsystem.utils;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

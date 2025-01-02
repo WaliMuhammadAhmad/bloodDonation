@@ -1,4 +1,4 @@
-//package com.bloodmanagementsystem.untils;
+//package com.bloodmanagementsystem.utils;
 //
 //
 //import jakarta.mail.MessagingException;

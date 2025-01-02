@@ -1,38 +1,30 @@
 package com.bloodmanagementsystem.serviceimple;
 
 import com.google.common.base.Strings;
-import com.bloodmanagementsystem.JWT.CustomerUserDetailsService;
-import com.bloodmanagementsystem.JWT.JwtFilter;
-import com.bloodmanagementsystem.JWT.JwtUtils;
+import com.bloodmanagementsystem.Config.CustomerUserDetailsService;
+import com.bloodmanagementsystem.Config.JwtFilter;
+import com.bloodmanagementsystem.Config.JwtUtils;
+import com.bloodmanagementsystem.Config.Log;
+import com.bloodmanagementsystem.Model.Admin;
 import com.bloodmanagementsystem.Model.BloodAppeal;
 import com.bloodmanagementsystem.Model.BloodGroup;
 import com.bloodmanagementsystem.Model.BloodInventory;
 import com.bloodmanagementsystem.Model.DonationRequest;
 import com.bloodmanagementsystem.Model.Status;
-import com.bloodmanagementsystem.Model.User;
-import com.bloodmanagementsystem.constents.CafeConstants;
 import com.bloodmanagementsystem.DAO.AdminDao;
 import com.bloodmanagementsystem.DAO.BloodAppealRepository;
 import com.bloodmanagementsystem.DAO.BloodGroupRepository;
 import com.bloodmanagementsystem.DAO.BloodInventoryRepository;
 import com.bloodmanagementsystem.DAO.DonationRequestRepository;
-import com.bloodmanagementsystem.DAO.UserDao;
 import com.bloodmanagementsystem.service.AdminService;
-import com.bloodmanagementsystem.service.UserService;
-import com.bloodmanagementsystem.untils.Utils;
 
-import lombok.extern.slf4j.Slf4j;
 //import com.bloodmanagementsystem.untils.EmailUtils;
-import com.bloodmanagementsystem.wrapper.UserWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -70,37 +62,28 @@ public class AdminServiceImpl implements AdminService {
     
     //    -----------service of login
     @Override
-    public ResponseEntity<String> login(Map<String, String> requestMap) {
-        log.info("Inside login!");
-        try{
-            log.info("Authenticating user: {}", requestMap.get("email"));
-            Authentication auth=authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(requestMap.get("email"),requestMap.get("password"))
-            );
-            log.info("Authentication result: {}", auth.isAuthenticated());
-            if (auth.isAuthenticated()){
-              //  if(customerUserDetailsService.getUserDetail().getStatus().equalsIgnoreCase("true")){
-                    return new ResponseEntity<String>("{\"token\":\""+
-                            jwtUtils.generateToken(customerUserDetailsService.getUserDetail().getEmail()),HttpStatus.OK);
-              //  }
-             //   else {
-              //      return new ResponseEntity<String>("{\"message\":\""+"Wait For Admin Approval"+"\"}", HttpStatus.BAD_REQUEST);
-              //  }
+    public Admin login(Map<String, String> requestMap) {
+        // Extract email and password from the map
+        String email = requestMap.get("email");
+        String password = requestMap.get("password");
 
-            }
-
-        }catch (Exception ex){
-            log.error("Error during authentication: {}", ex.getMessage());
-
+        if (email == null || password == null) {
+            throw new IllegalArgumentException("Email and password are required");
         }
 
-        return new ResponseEntity<String>("{\"message\":\""+"Bad Credentials."+"\"}", HttpStatus.BAD_REQUEST);
+        // Authenticate the user
+        Optional<Admin> admin = adminDao.findByEmail(email);
+        if (admin.isPresent() && admin.get().getPassword().equals(password)) {
+            return admin.get(); // Return the authenticated user
+        }
+
+        throw new IllegalArgumentException("Invalid email or password"); // Or a custom exception
     }
 
 //    ------------ Donation Request Handeling
     
     @Override
-    public DonationRequest approveDonationRequest(int requestId, String adminRemarks) {
+    public ResponseEntity<String> approveDonationRequest(int requestId, String adminRemarks) {
         DonationRequest request = donationRequestRepository.findById(requestId)
                 .orElseThrow(() -> new RuntimeException("Donation request not found"));
 
@@ -112,31 +95,36 @@ public class AdminServiceImpl implements AdminService {
 
         // Update request status to APPROVED and add remarks
         request.setStatus(Status.APPROVED);
-        request.setAdminRemarks(adminRemarks);
+        request.setAdminRemarks(adminRemarks != null ? adminRemarks : "No remarks provided.");
 
         // Update the user's last donation date
         request.getUser().setLastDonationDate(LocalDate.now());
 
-        return donationRequestRepository.save(request);
+       donationRequestRepository.save(request);
+       return new ResponseEntity<>("Blood Donation request Approved successfully.", HttpStatus.OK);
+
     }
 
     @Override
-    public DonationRequest rejectDonationRequest(int requestId, String adminRemarks) {
+    public ResponseEntity<String> rejectDonationRequest(int requestId, String adminRemarks) {
         DonationRequest request = donationRequestRepository.findById(requestId)
                 .orElseThrow(() -> new RuntimeException("Donation request not found"));
 
         // Update request status to REJECTED and add remarks
         request.setStatus(Status.REJECTED);
-        request.setAdminRemarks(adminRemarks);
+        donationRequestRepository.save(request);
 
-        return donationRequestRepository.save(request);
+        request.setAdminRemarks(adminRemarks != null ? adminRemarks : "No remarks provided.");
+
+        return new ResponseEntity<>("Blood Donation request Rejected successfully.", HttpStatus.OK);
+
     }
     
     
     //  ---------------- Service of Blood Appeal Requests
     
     @Override
-    public ResponseEntity<String> approveBloodAppeal(int id) {
+    public ResponseEntity<String> approveBloodAppeal(int id, String remarks) {
         Optional<BloodAppeal> optionalAppeal = bloodAppealRepository.findById(id);
         if (!optionalAppeal.isPresent()) {
             return new ResponseEntity<>("Blood appeal request not found.", HttpStatus.NOT_FOUND);
@@ -145,6 +133,7 @@ public class AdminServiceImpl implements AdminService {
         BloodAppeal appeal = optionalAppeal.get();
         appeal.setStatus(Status.APPROVED);
         bloodAppealRepository.save(appeal);
+        appeal.setRemarks(remarks != null ? remarks : "No remarks provided.");
         return new ResponseEntity<>("Blood appeal request approved successfully.", HttpStatus.OK);
     }
 
@@ -157,8 +146,8 @@ public class AdminServiceImpl implements AdminService {
 
         BloodAppeal appeal = optionalAppeal.get();
         appeal.setStatus(Status.REJECTED);
-        appeal.setRemarks(remarks != null ? remarks : "No remarks provided.");
         bloodAppealRepository.save(appeal);
+        appeal.setRemarks(remarks != null ? remarks : "No remarks provided.");
         return new ResponseEntity<>("Blood appeal request rejected successfully.", HttpStatus.OK);
     }
 
@@ -208,6 +197,7 @@ public class AdminServiceImpl implements AdminService {
             bloodInventoryRepository.save(inventory);
             return new ResponseEntity<>("Blood added successfully!", HttpStatus.OK);
         } catch (Exception e) {
+            Log.logError("An error occurred while processing the request.", e);
             return new ResponseEntity<>("Error adding blood: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -235,6 +225,7 @@ public class AdminServiceImpl implements AdminService {
 
             return new ResponseEntity<>("Blood removed successfully!", HttpStatus.OK);
         } catch (Exception e) {
+            Log.logError("An error occurred while processing the request.", e);
             return new ResponseEntity<>("Error removing blood: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

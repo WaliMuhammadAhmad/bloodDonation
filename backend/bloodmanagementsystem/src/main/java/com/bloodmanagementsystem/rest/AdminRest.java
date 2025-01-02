@@ -2,7 +2,6 @@ package com.bloodmanagementsystem.rest;
 
 import com.bloodmanagementsystem.Model.BloodAppeal;
 import com.bloodmanagementsystem.Model.DonationRequest;
-import com.bloodmanagementsystem.wrapper.AdminWrapper;
 import com.bloodmanagementsystem.wrapper.UserWrapper;
 
 import org.springframework.http.ResponseEntity;
@@ -25,34 +24,34 @@ public interface AdminRest {
   
 //--------Donation Request Handeling
   
-  @PostMapping("/donation-request/approve/{id}")
+  @PostMapping("/donationrequest/approve/{id}")
   public ResponseEntity<String> approveDonationRequest(@PathVariable int id, @RequestBody Map<String, String> requestMap);
-  @PostMapping("/donation-request/reject/{id}")
+  @PostMapping("/donationrequest/reject/{id}")
   public ResponseEntity<String> rejectDonationRequest(@PathVariable int id, @RequestBody Map<String, String> requestMap);
   
 //--------Blood Appeal Requests Handeling
   
-  @PostMapping("/blood-appeal/approve/{id}")
-  public ResponseEntity<String> approveBloodAppeal(@PathVariable int id);
-  @PostMapping("/blood-appeal/reject/{id}")
+  @PostMapping("/bloodappeal/approve/{id}")
+  public ResponseEntity<String> approveBloodAppeal(@PathVariable int id, @RequestBody Map<String, String> requestMap);
+  @PostMapping("/bloodappeal/reject/{id}")
   public ResponseEntity<String> rejectBloodAppeal(@PathVariable int id, @RequestBody Map<String, String> requestMap);
   
 //--------View Blood Appeal Requests
-  @GetMapping("/blood-appeals")
+  @GetMapping("/bloodappeals")
   public ResponseEntity<List<BloodAppeal>> getAllBloodAppeals();
-  @GetMapping("/blood-appeals/status/{status}")
+  @GetMapping("/bloodappeals/status/{status}")
   public ResponseEntity<List<BloodAppeal>> getBloodAppealsByStatus(@PathVariable String status);
-  
+
 //--------View Blood Donation Requests
-  @GetMapping("/donation-requests")
+  @GetMapping("/donationrequests")
   public ResponseEntity<List<DonationRequest>> getAllDonationRequests();
-  @GetMapping("/donation-requests/status/{status}")
+  @GetMapping("/donationrequests/status/{status}")
   public ResponseEntity<List<DonationRequest>> getDonationRequestsByStatus(@PathVariable String status);
-  
+
 //--------Manage Inventory
-  @PostMapping("/add")
+  @PostMapping("/addblood")
   public ResponseEntity<String> addBloodToInventory(@RequestBody Map<String, Object> requestMap);
-  @PostMapping("/remove")
+  @PostMapping("/removeblood")
   public ResponseEntity<String> removeBloodFromInventory(@RequestBody Map<String, Object> requestMap);
   
   

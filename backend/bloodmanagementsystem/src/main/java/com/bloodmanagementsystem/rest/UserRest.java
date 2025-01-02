@@ -2,11 +2,8 @@ package com.bloodmanagementsystem.rest;
 
 
 import com.bloodmanagementsystem.Model.DonationRequest;
-import com.bloodmanagementsystem.wrapper.UserWrapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 import java.util.Map;
 
 //-------user api interface
@@ -19,8 +16,8 @@ public interface UserRest {
 
  //    --------login Api
     @PostMapping(path = "/login")
-    public ResponseEntity<String> login(@RequestBody(required = true)Map<String,String> requestMap);
-    
+    public ResponseEntity<String> login(@RequestBody(required = true) Map<String, String> requestMap);
+     
 // //    Api to get All users
 //    @GetMapping(path = "/getusers")
 //    public  ResponseEntity<List<UserWrapper>> getAllUser();

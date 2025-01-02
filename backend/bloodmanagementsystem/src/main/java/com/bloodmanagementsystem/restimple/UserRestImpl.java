@@ -1,20 +1,17 @@
 package com.bloodmanagementsystem.restimple;
 
+import com.bloodmanagementsystem.Config.JwtUtils;
+import com.bloodmanagementsystem.Config.Log;
 import com.bloodmanagementsystem.Model.DonationRequest;
-import com.bloodmanagementsystem.constents.CafeConstants;
+import com.bloodmanagementsystem.Model.User;
+import com.bloodmanagementsystem.constants.constants;
 import com.bloodmanagementsystem.rest.UserRest;
 import com.bloodmanagementsystem.service.UserService;
-import com.bloodmanagementsystem.untils.Utils;
-import com.bloodmanagementsystem.wrapper.UserWrapper;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import com.bloodmanagementsystem.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 
@@ -24,17 +21,20 @@ public class UserRestImpl implements UserRest {
 
     @Autowired
     UserService userService;
-    
+    @Autowired
+    private JwtUtils jwtUtils;
 
     //    -------Api implementation for sign up
     @Override
     public ResponseEntity<String> signUp(Map<String, String> requestMap) {
         try {
+        	Log.logApiRequest("POST", "/user/signup");
             return userService.signUp(requestMap);
         } catch (Exception ex) {
+            Log.logError("An error occurred while processing the request.", ex);
             ex.printStackTrace();
         }
-        return Utils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return Utils.getResponseEntity(constants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
 
     }
 
@@ -42,19 +42,43 @@ public class UserRestImpl implements UserRest {
     @Override
     public ResponseEntity<String> login(Map<String, String> requestMap) {
         try {
-        	System.out.println(requestMap);
-            return userService.login(requestMap);
+        	Log.logApiRequest("POST", "/user/login");
+        	 // Extract email and password from the request body
+            String email = requestMap.get("email");
+            String password = requestMap.get("password");
+
+            if (email == null || password == null) {
+                return ResponseEntity.badRequest().body("Email and password are required");
+            }
+
+            // Authenticate the user
+            User authenticatedUser = userService.login(requestMap);
+            if (authenticatedUser != null) {
+                // Generate JWT token
+                String token = jwtUtils.generateToken(email);
+
+                // Prepare JSON response
+                String jsonResponse = String.format("{\"token\": \"%s\", \"user\": %s}", 
+                    token, authenticatedUser);
+
+                // Return token and user details
+                return ResponseEntity.ok(jsonResponse);
+            }
+            
+            // If authentication fails
+            return ResponseEntity.status(401).body("Invalid email or password");
 
         } catch (Exception ex) {
+            Log.logError("An error occurred while processing the request.", ex);
             ex.printStackTrace();
         }
 
-        return Utils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return Utils.getResponseEntity(constants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
 
     }
 
-    @PersistenceContext
-    private EntityManager entityManager;
+//    @PersistenceContext
+//    private EntityManager entityManager;
 
 //    //---------Api implementation for get all users
 //    @Override
@@ -72,14 +96,17 @@ public class UserRestImpl implements UserRest {
     @Override
     public ResponseEntity<String> makeBloodAppeal( Map<String, String> requestMap) {
         try {
+        	Log.logApiRequest("POST", "/user/bloodappeal");
             return userService.makeBloodAppeal(requestMap);
         } catch (Exception ex) {
+            Log.logError("An error occurred while processing the request.", ex);
             ex.printStackTrace();
             return new ResponseEntity<>("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
   
     public ResponseEntity<DonationRequest> requestDonation(Map<String, Object> requestMap) {
+    	Log.logApiRequest("POST", "/user/donationrequest");
         DonationRequest createdRequest = userService.createDonationRequest(requestMap);
         return ResponseEntity.ok(createdRequest);
     }

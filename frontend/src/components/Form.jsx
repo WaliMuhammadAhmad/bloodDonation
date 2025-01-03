@@ -45,7 +45,42 @@ export default function Form() {
       alert("Password must be 8-16 characters long.");
       formValid = false;
     }
+    if (formValid) {
+      try {
+        const requestMap = {
+          name: formData.name,
+          city: formData.city,
+          bloodGroup: formData.bloodGroup,
+          quantity: formData.quantity,
+          location: formData.location
+        };
 
+        const isDonationRequest = formType === "donate"; // Check if it's a donation request form
+        const endpoint = isDonationRequest ? "/user/donationrequest" : "/user/bloodappeal"; // Use the donation request endpoint
+
+        const response = await axios.post(endpoint, requestMap);
+
+        if (response.status === 200) {
+          const successMessage = isDonationRequest ? 'Donation request submitted successfully!' : 'Blood request submitted successfully!';
+          setShowSuccess(true);
+          setTimeout(() => {
+            setShowSuccess(false);
+            navigate("/"); // Redirect after submission
+          }, 5000);
+        } else {
+          setShowError(true);
+          setTimeout(() => setShowError(false), 5000);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        setShowError(true);
+        setTimeout(() => setShowError(false), 5000);
+      }
+    } else {
+      setShowError(true);
+      setTimeout(() => setShowError(false), 5000);
+    }
+  
     if (formValid) {
       try {
         const requestMap = {
@@ -109,30 +144,8 @@ export default function Form() {
             required
           />
         </label>
-        <label className='input input-bordered flex items-center gap-2'>
-          Email
-          <input
-            type='email'
-            name='email'
-            value={formData.email}
-            onChange={handleChange}
-            className='grow'
-            placeholder='you@example.com'
-            required
-          />
-        </label>
-        <label className='input input-bordered flex items-center gap-2'>
-          Password
-          <input
-            type='password'
-            name='password'
-            value={formData.password}
-            onChange={handleChange}
-            className='grow'
-            placeholder='Enter password'
-            required
-          />
-        </label>
+
+
         <div className='flex gap-8'>
           <select
             name='city'

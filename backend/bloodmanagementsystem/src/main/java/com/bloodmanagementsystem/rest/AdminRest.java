@@ -24,16 +24,16 @@ public interface AdminRest {
   
 //--------Donation Request Handeling
   
-  @PostMapping("/donationrequest/approve/{id}")
+  @PutMapping("/donationrequest/approve/{id}")
   public ResponseEntity<String> approveDonationRequest(@PathVariable int id, @RequestBody Map<String, String> requestMap);
-  @PostMapping("/donationrequest/reject/{id}")
+  @PutMapping("/donationrequest/reject/{id}")
   public ResponseEntity<String> rejectDonationRequest(@PathVariable int id, @RequestBody Map<String, String> requestMap);
   
 //--------Blood Appeal Requests Handeling
   
-  @PostMapping("/bloodappeal/approve/{id}")
+  @PutMapping("/bloodappeal/approve/{id}")
   public ResponseEntity<String> approveBloodAppeal(@PathVariable int id, @RequestBody Map<String, String> requestMap);
-  @PostMapping("/bloodappeal/reject/{id}")
+  @PutMapping("/bloodappeal/reject/{id}")
   public ResponseEntity<String> rejectBloodAppeal(@PathVariable int id, @RequestBody Map<String, String> requestMap);
   
 //--------View Blood Appeal Requests

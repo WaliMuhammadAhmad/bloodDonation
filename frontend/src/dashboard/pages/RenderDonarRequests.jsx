@@ -43,7 +43,7 @@ function RenderManageDonarRequests({ role }) {
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const response = await axios.get("/api/blood-donation-requests");
+        const response = await axios.get("/donationrequests");
         if (response.data && response.data.length > 0) {
           setRequests(response.data); // Use backend data if available
         } else {

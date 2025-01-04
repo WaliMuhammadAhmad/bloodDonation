@@ -26,7 +26,7 @@ public interface UserRest {
     public ResponseEntity<String> makeBloodAppeal(@RequestBody Map<String, String> requestMap);
 
     @PostMapping("/donationrequest")
-    public ResponseEntity<DonationRequest> requestDonation(@RequestBody Map<String, Object> requestMap);
+    public ResponseEntity<String> requestDonation(@RequestBody Map<String, String> requestMap);
         
     
     // //    APi to enable and disable user account

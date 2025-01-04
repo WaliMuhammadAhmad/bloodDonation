@@ -25,12 +25,20 @@ function RenderHome({ role }) {
     const fetchData = async () => {
       try {
         // Fetch stats
-        const statsResponse = await axios.get(`/api/stats?role=${role}`);
-        setStats(statsResponse.data);
+        const pendingDonations = await axios.get(`inventory/pendingDonations/count`);
+        const pendingAppeals = await axios.get(`inventory/pendingAppeals/count`);
+        const rejectedAppeals = await axios.get(`inventory/rejectedAppeals/count`);
+        const rejectedDonations = await axios.get(`inventory/rejectedDonations/count`);
+
+        const data = [{ title: "Pending Donor Requests", value: pendingDonations.data },
+        { title: "Pending Blood Appeals", value: pendingAppeals.data },
+        { title: "Rejected Blood Appeals", value: rejectedAppeals.data },
+        { title: "Total Users", value: rejectedDonations.data },]
+        setStats(data);
 
         // Fetch appeals
         if (role === "admin" || role === "user") {
-          const appealsResponse = await axios.get("/api/appeals");
+          const appealsResponse = await axios.get("/api/appeals"); // add your adpi here for appeals
           setAppeals(
             appealsResponse.data.length > 0
               ? appealsResponse.data
@@ -40,7 +48,7 @@ function RenderHome({ role }) {
 
         // Fetch donor requests
         if (role === "admin" || role === "donor") {
-          const donorRequestsResponse = await axios.get("/api/donor-requests");
+          const donorRequestsResponse = await axios.get("/admin/donationrequests"); // add your api here for requests - noman app try kro is ko ma khaha kahne laga koi issue ho ap call kr dena ok
           setDonorRequests(
             donorRequestsResponse.data.length > 0
               ? donorRequestsResponse.data
@@ -55,18 +63,18 @@ function RenderHome({ role }) {
         setStats(
           role === "admin"
             ? [
-                { title: "Total Donor Requests", value: 123 },
-                { title: "Total Appeals", value: 456 },
-                { title: "Total Donors", value: 789 },
-                { title: "Total Users", value: 321 },
-              ]
+              { title: "Total Donor Requests", value: statsResponse.data },
+              { title: "Total Appeals", value: 456 },
+              { title: "Total Donors", value: 789 },
+              { title: "Total Users", value: 321 },
+            ]
             : role === "user"
-            ? [
+              ? [
                 { title: "My Appeals", value: 5 },
                 { title: "Approved Appeals", value: 3 },
                 { title: "Pending Appeals", value: 2 },
               ]
-            : [
+              : [
                 { title: "My Donations", value: 10 },
                 { title: "Pending Requests", value: 2 },
                 { title: "Approved Requests", value: 5 },
@@ -79,6 +87,7 @@ function RenderHome({ role }) {
   }, [role]);
 
   return (
+
     <div className=''>
       <div className='container flex flex-col gap-5 justify-center items-center h-[85dvh]'>
         {/* Stats Cards */}

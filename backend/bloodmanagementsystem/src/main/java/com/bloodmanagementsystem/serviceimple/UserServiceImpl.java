@@ -118,7 +118,7 @@ public class UserServiceImpl implements UserService {
         if (email == null || password == null) {
             throw new IllegalArgumentException("Email and password are required");
         }
-
+        
         // Authenticate the user
         Optional<User> user = userDao.findByEmail(email);
         if (user.isPresent() && user.get().getPassword().equals(password)) {
@@ -158,8 +158,13 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<String> makeBloodAppeal(Map<String, String> requestMap) {
         try {
             // Extracting values from requestMap
-            int userId = Integer.parseInt(requestMap.get("userId"));
-            int bloodGroupId = Integer.parseInt(requestMap.get("bloodGroupId"));
+        	String temp = jwtUtils.extractEmail(customerUserDetailsService.staticToken);
+        	int userId = userDao.getIdByEmail(temp);
+        	
+           // int userId = Integer.parseInt(requestMap.get("userId"));
+            //int bloodGroupId = Integer.parseInt(requestMap.get("bloodGroupId"));
+        	String temp1 = requestMap.get("bloodGroup");
+            int bloodGroupId = bloodGroupRepository.getIdByBloodGroup(temp1);
             String location = requestMap.get("location");
             int quantity = Integer.parseInt(requestMap.get("quantity"));
             String description = requestMap.get("description");  // New description field
@@ -200,27 +205,50 @@ public class UserServiceImpl implements UserService {
 //  -----------service to make donation request
     
     @Override
-    public DonationRequest createDonationRequest(Map<String, Object> requestMap) {
-        int userId = (int) requestMap.get("userId");
-        int bloodGroupId = (int) requestMap.get("bloodGroupId");
-        String location = (String) requestMap.get("location");
-        int quantity = (int) requestMap.get("quantity");
+    public ResponseEntity<String> createDonationRequest(Map<String, String> requestMap) {
+        try {
+            // Extracting values from requestMap
+        	String temp = jwtUtils.extractEmail(customerUserDetailsService.staticToken);
+        	int userId = userDao.getIdByEmail(temp);
+        	
+           // int userId = Integer.parseInt(requestMap.get("userId"));
+        	String temp1 = requestMap.get("bloodGroup");
+            int bloodGroupId = bloodGroupRepository.getIdByBloodGroup(temp1);
+            String location = requestMap.get("location");
+            int quantity = Integer.parseInt(requestMap.get("quantity"));
 
-        // Fetch the User and BloodGroup from the database
-        User user = userDao.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found!"));
-        BloodGroup bloodGroup = bloodGroupRepository.findById(bloodGroupId)
-                .orElseThrow(() -> new RuntimeException("BloodGroup not found!"));
+            // Fetching User and BloodGroup from the database
+            Optional<User> user = userDao.findById(userId);
+            Optional<BloodGroup> bloodGroup = bloodGroupRepository.findById(bloodGroupId);
 
-        // Create a new DonationRequest object
-        DonationRequest donationRequest = new DonationRequest();
-        donationRequest.setUser(user);
-        donationRequest.setBloodGroup(bloodGroup);
-        donationRequest.setLocation(location);
-        donationRequest.setQuantity(quantity);
+            if (user.isPresent() && bloodGroup.isPresent()) {
+                // Creating a new BloodAppeal object
+                DonationRequest appeal = new DonationRequest();
+                appeal.setUser(user.get());
+                appeal.setBloodGroup(bloodGroup.get());
+                appeal.setLocation(location);
+                appeal.setQuantity(quantity);
+                 // Default status
 
-        // Save and return the created request
-        return donationRequestRepository.save(donationRequest);
-    }    
+                // Saving the appeal to the database
+                donationRequestRepository.save(appeal);
 
+                // Returning success response
+                return new ResponseEntity<>("Blood donation request created successfully", HttpStatus.OK);
+            } else {
+                // Handling case where user or blood group is invalid
+                return new ResponseEntity<>("Invalid user or blood group ID", HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            Log.logError("An error occurred while processing the request.", e);
+            // Printing stack trace for debugging
+            e.printStackTrace();
+            
+            // Returning error response in case of exception
+            return new ResponseEntity<>("Error creating blood donation request", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+          
+  
 }

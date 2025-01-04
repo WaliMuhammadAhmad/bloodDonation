@@ -31,7 +31,11 @@ private final Key secret = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     public String extractEmail(String token) {
         return Jwts.parserBuilder().setSigningKey(secret).build().parseClaimsJws(token).getBody().getSubject();
     }
-
+    // Function to extract the user ID from the token
+    public int extractId(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.get("userId", Integer.class);
+    }
 //    function to extract expirations from the token
     public Date extractExpiration(String token){
         return extractClaims(token,Claims::getExpiration);

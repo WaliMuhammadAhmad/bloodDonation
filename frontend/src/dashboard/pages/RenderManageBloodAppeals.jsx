@@ -37,12 +37,13 @@ const dummyAppeals = [
 
 // eslint-disable-next-line react/prop-types
 function RenderManageBloodAppeals({ role }) {
-  const [appeals, setAppeals] = useState(dummyAppeals);
+  const [appeals, setAppeals] = useState([]);
 
+  // GET
   useEffect(() => {
     const fetchAppeals = async () => {
       try {
-        const response = await axios.get("/api/blood-appeals");
+        const response = await axios.get("/admin/bloodappeals");
         if (response.data && response.data.length > 0) {
           setAppeals(response.data);
         } else {
@@ -59,7 +60,7 @@ function RenderManageBloodAppeals({ role }) {
 
   const cancelAppeal = async (id) => {
     try {
-      await axios.put(`/api/blood-appeals/${id}`, { status: "Cancelled" });
+      await axios.put(`/bloodappeal/reject/${id}`, { status: "Cancelled" });
       setAppeals((prev) =>
         prev.map((appeal) =>
           appeal.id === id ? { ...appeal, status: "Cancelled" } : appeal
@@ -71,11 +72,13 @@ function RenderManageBloodAppeals({ role }) {
   };
 
   const approveAppeal = async (id) => {
+
     try {
-      await axios.put(`/api/blood-appeals/${id}`, { status: "Approved" });
+      const res = await axios.put(`/admin/bloodappeal/approve/${id}`, { remarks: "APPROVED" });
+      alert(res.data);
       setAppeals((prev) =>
         prev.map((appeal) =>
-          appeal.id === id ? { ...appeal, status: "Approved" } : appeal
+          appeal.appealID === id ? { ...appeal, status: "APPROVED" } : appeal
         )
       );
     } catch (error) {
@@ -85,10 +88,11 @@ function RenderManageBloodAppeals({ role }) {
 
   const rejectAppeal = async (id) => {
     try {
-      await axios.put(`/api/blood-appeals/${id}`, { status: "Rejected" });
+      const res = await axios.put(`/admin/bloodappeal/reject/${id}`, { remarks: "REJECTED" });
+      alert(res.data);
       setAppeals((prev) =>
         prev.map((appeal) =>
-          appeal.id === id ? { ...appeal, status: "Rejected" } : appeal
+          appeal.appealID === id ? { ...appeal, status: "REJECTED" } : appeal
         )
       );
     } catch (error) {
@@ -109,60 +113,57 @@ function RenderManageBloodAppeals({ role }) {
     appeals
       .filter((appeal) => appeal.status === status)
       .map((appeal) => (
-        <div key={appeal.id} className={theme.ProjectCards}>
+        <div key={appeal.appealID} className={theme.ProjectCards}>
           <div className='flex flex-col gap-1 text-text'>
             <p>
-              <span className='font-bold'>User:</span> {appeal.user}
+              <span className='font-bold'>User:</span> {appeal.user.name}
             </p>
             <p>
-              <span className='font-bold'>Blood Type:</span> {appeal.bloodType}
+              <span className='font-bold'>Blood Type:</span> {appeal.bloodGroup.bloodGroup}
             </p>
             <p>
               <span className='font-bold'>Quantity:</span> {appeal.quantity}{" "}
               Units
             </p>
             <p>
-              <span className='font-bold'>City:</span> {appeal.city}
+              <span className='font-bold'>Email:</span> {appeal.user.email}
             </p>
             <p>
               <span className='font-bold'>Location:</span> {appeal.location}
             </p>
-            <p>
-              <span className='font-bold'>Priority:</span> {appeal.priority}
-            </p>
           </div>
           <div className='flex gap-2'>
-            {role === "admin" && status === "Pending" && (
+            {role === "admin" && status === "PENDING" && (
               <>
                 <button
                   className={`${theme.ActionButton} btn-success`}
-                  onClick={() => approveAppeal(appeal.id)}>
+                  onClick={() => approveAppeal(appeal.appealID)}>
                   Approve
                 </button>
                 <button
                   className={`${theme.ActionButton} btn-error`}
-                  onClick={() => rejectAppeal(appeal.id)}>
+                  onClick={() => rejectAppeal(appeal.appealID)}>
                   Reject
                 </button>
               </>
             )}
-            {role === "admin" && status === "Approved" && (
+            {role === "admin" && status === "APPROVED" && (
               <button
                 className={`${theme.ActionButton} btn-error`}
-                onClick={() => deleteAppeal(appeal.id)}>
+                onClick={() => deleteAppeal(appeal.appealID)}>
                 Delete
               </button>
             )}
-            {role === "admin" && status === "Rejected" && (
+            {role === "admin" && status === "REJECTED" && (
               <>
                 <button
                   className={`${theme.ActionButton} btn-success`}
-                  onClick={() => approveAppeal(appeal.id)}>
+                  onClick={() => approveAppeal(appeal.appealID)}>
                   Approve Again
                 </button>
                 <button
                   className={`${theme.ActionButton} btn-error`}
-                  onClick={() => deleteAppeal(appeal.id)}>
+                  onClick={() => deleteAppeal(appeal.appealID)}>
                   Delete
                 </button>
               </>
@@ -170,7 +171,7 @@ function RenderManageBloodAppeals({ role }) {
             {role !== "admin" && status === "Pending" && (
               <button
                 className={`${theme.ActionButton} btn-error`}
-                onClick={() => cancelAppeal(appeal.id)}>
+                onClick={() => cancelAppeal(appeal.appealID)}>
                 Cancel
               </button>
             )}
@@ -182,15 +183,15 @@ function RenderManageBloodAppeals({ role }) {
     <div className='flex flex-col gap-5 h-full'>
       <div className='w-full'>
         <h2 className={theme.SectionTitle}>Pending Appeals</h2>
-        <div className='flex flex-col gap-3'>{renderAppeals("Pending")}</div>
+        <div className='flex flex-col gap-3'>{renderAppeals("PENDING")}</div>
       </div>
       <div className='w-full'>
         <h2 className={theme.SectionTitle}>Approved Appeals</h2>
-        <div className='flex flex-col gap-3'>{renderAppeals("Approved")}</div>
+        <div className='flex flex-col gap-3'>{renderAppeals("APPROVED")}</div>
       </div>
       <div className='w-full'>
         <h2 className={theme.SectionTitle}>Rejected Appeals</h2>
-        <div className='flex flex-col gap-3'>{renderAppeals("Rejected")}</div>
+        <div className='flex flex-col gap-3'>{renderAppeals("REJECTED")}</div>
       </div>
     </div>
   );

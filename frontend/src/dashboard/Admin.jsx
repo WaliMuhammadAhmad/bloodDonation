@@ -73,15 +73,7 @@ function Admin() {
                   ? "bg-primary rounded-l-xl"
                   : ""
               }`}
-              onClick={() => handleItemClick("Manage Donors")}>
-              Manage Donors
-            </li>
-            <li
-              className={`${theme.SidebarItems} ${
-                selectedItem === "Manage Profile"
-                  ? "bg-primary rounded-l-xl"
-                  : ""
-              }`}
+             
               onClick={() => handleItemClick("Manage Profile")}>
               Manage Profile
             </li>

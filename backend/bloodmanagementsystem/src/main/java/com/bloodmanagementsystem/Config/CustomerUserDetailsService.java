@@ -20,7 +20,8 @@ public class CustomerUserDetailsService implements UserDetailsService {
 
     private final UserDao userRepository;
     private final AdminDao adminRepository;
-
+    public static String staticToken;
+    
     public CustomerUserDetailsService(UserDao userRepository, AdminDao admin) {
         this.userRepository = userRepository;
         this.adminRepository= admin;

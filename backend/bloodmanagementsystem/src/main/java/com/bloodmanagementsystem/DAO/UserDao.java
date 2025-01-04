@@ -3,6 +3,7 @@ package com.bloodmanagementsystem.DAO;
 import com.bloodmanagementsystem.Model.User;
 import com.bloodmanagementsystem.wrapper.UserWrapper;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -20,6 +21,8 @@ public interface UserDao extends JpaRepository<User,Integer> {
 
 //   //abstract query function to get all user
     List<UserWrapper> getAllUser();
+    @Query("SELECT u.id FROM User u WHERE u.email = :email")
+    Integer getIdByEmail(@Param("email") String email);
 
     // abstract query function to get all admin
 //    List<String> getAllAdmin();

@@ -11,12 +11,15 @@ import com.bloodmanagementsystem.Model.BloodGroup;
 import com.bloodmanagementsystem.Model.BloodInventory;
 import com.bloodmanagementsystem.Model.DonationRequest;
 import com.bloodmanagementsystem.Model.Status;
+import com.bloodmanagementsystem.Model.User;
 import com.bloodmanagementsystem.DAO.AdminDao;
 import com.bloodmanagementsystem.DAO.BloodAppealRepository;
 import com.bloodmanagementsystem.DAO.BloodGroupRepository;
 import com.bloodmanagementsystem.DAO.BloodInventoryRepository;
 import com.bloodmanagementsystem.DAO.DonationRequestRepository;
+import com.bloodmanagementsystem.DAO.UserDao;
 import com.bloodmanagementsystem.service.AdminService;
+import com.bloodmanagementsystem.service.EmailSenderService;
 
 //import com.bloodmanagementsystem.untils.EmailUtils;
 import org.slf4j.Logger;
@@ -34,10 +37,14 @@ import java.util.*;
 @Service
 public class AdminServiceImpl implements AdminService {
     private static final Logger log = LoggerFactory.getLogger(AdminServiceImpl.class);
-    
+   @Autowired
+   private EmailSenderService senderService;
+   
+  
     @Autowired
     private AdminDao adminDao;
-//
+    @Autowired
+    private UserDao userDao;
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -84,24 +91,17 @@ public class AdminServiceImpl implements AdminService {
     
     @Override
     public ResponseEntity<String> approveDonationRequest(int requestId, String adminRemarks) {
-        DonationRequest request = donationRequestRepository.findById(requestId)
-                .orElseThrow(() -> new RuntimeException("Donation request not found"));
+    	 DonationRequest request = donationRequestRepository.findById(requestId)
+                 .orElseThrow(() -> new RuntimeException("Donation request not found"));
 
-        // Check if the user donated in the last 90 days
-        LocalDate lastDonationDate = request.getUser().getLastDonationDate();
-        if (lastDonationDate != null && ChronoUnit.DAYS.between(lastDonationDate, LocalDate.now()) < 90) {
-            throw new RuntimeException("User donated within the last 90 days. Cannot approve the request.");
-        }
+         // Update request status to REJECTED and add remarks
+         request.setStatus(Status.APPROVED);
+         donationRequestRepository.save(request);
 
-        // Update request status to APPROVED and add remarks
-        request.setStatus(Status.APPROVED);
-        request.setAdminRemarks(adminRemarks != null ? adminRemarks : "No remarks provided.");
+         request.setAdminRemarks(adminRemarks != null ? adminRemarks : "No remarks provided.");
+         senderService.sendEmail(request.getUser().getEmail(), "Donation Request Approval", request.getAdminRemarks());
+         return new ResponseEntity<>("Blood Donation request Approved successfully.", HttpStatus.OK);
 
-        // Update the user's last donation date
-        request.getUser().setLastDonationDate(LocalDate.now());
-
-       donationRequestRepository.save(request);
-       return new ResponseEntity<>("Blood Donation request Approved successfully.", HttpStatus.OK);
 
     }
 
@@ -115,6 +115,7 @@ public class AdminServiceImpl implements AdminService {
         donationRequestRepository.save(request);
 
         request.setAdminRemarks(adminRemarks != null ? adminRemarks : "No remarks provided.");
+        senderService.sendEmail(request.getUser().getEmail(), "Donation Request Rejection", request.getAdminRemarks());
 
         return new ResponseEntity<>("Blood Donation request Rejected successfully.", HttpStatus.OK);
 
@@ -129,11 +130,15 @@ public class AdminServiceImpl implements AdminService {
         if (!optionalAppeal.isPresent()) {
             return new ResponseEntity<>("Blood appeal request not found.", HttpStatus.NOT_FOUND);
         }
+        DonationRequest request = donationRequestRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Donation request not found"));
 
         BloodAppeal appeal = optionalAppeal.get();
         appeal.setStatus(Status.APPROVED);
         bloodAppealRepository.save(appeal);
         appeal.setRemarks(remarks != null ? remarks : "No remarks provided.");
+        senderService.sendEmail(request.getUser().getEmail(), "Blood Appeal Approval", appeal.getRemarks());
+
         return new ResponseEntity<>("Blood appeal request approved successfully.", HttpStatus.OK);
     }
 
@@ -143,11 +148,14 @@ public class AdminServiceImpl implements AdminService {
         if (!optionalAppeal.isPresent()) {
             return new ResponseEntity<>("Blood appeal request not found.", HttpStatus.NOT_FOUND);
         }
+        DonationRequest request = donationRequestRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Donation request not found"));
 
         BloodAppeal appeal = optionalAppeal.get();
         appeal.setStatus(Status.REJECTED);
         bloodAppealRepository.save(appeal);
         appeal.setRemarks(remarks != null ? remarks : "No remarks provided.");
+        senderService.sendEmail(request.getUser().getEmail(), "Blood Appeal Rejection", appeal.getRemarks());
         return new ResponseEntity<>("Blood appeal request rejected successfully.", HttpStatus.OK);
     }
 

@@ -4,7 +4,7 @@ import Starter from "../components/Starter";
 import Cards from "../components/Cards";
 import Footer from "../components/Footer";
 import Testimonials from "../components/Testimonials";
-import Form from "../components/Form";
+import Form from "../components/AppealForm";
 
 export default function Appeal() {
   React.useEffect(() => {

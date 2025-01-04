@@ -51,6 +51,7 @@ public class AdminRestImpl implements AdminRest {
                    // Prepare JSON response
                    String jsonResponse = String.format("{\"token\": \"%s\", \"user\": %s}", 
                        token, authenticatedUser);
+                   
 
                    // Return token and user details
                    return ResponseEntity.ok(jsonResponse);
@@ -86,8 +87,8 @@ public ResponseEntity<String> rejectDonationRequest(int id, Map<String, String> 
 
 @Override
 public ResponseEntity<String> approveBloodAppeal(int id,  Map<String, String> requestMap) {
-	Log.logApiRequest("POST", "/admin/bloodappeal/approve/" + id);
-	return adminService.approveBloodAppeal(id, requestMap.get("remarks"));
+    Log.logApiRequest("POST", "/admin/bloodappeal/approve/" + id);
+    return adminService.approveBloodAppeal(id, requestMap.get("remarks"));
 }
 @Override
 public ResponseEntity<String> rejectBloodAppeal(int id, Map<String, String> requestMap) {

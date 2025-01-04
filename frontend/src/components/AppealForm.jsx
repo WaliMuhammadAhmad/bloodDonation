@@ -15,6 +15,7 @@ export default function Form() {
     bloodGroup: "",
     quantity: "",
     location: "",
+    description: ""
   });
 
   const handleChange = (e) => {
@@ -28,7 +29,7 @@ export default function Form() {
 
     let formValid = true;
     // Add validation logic here if needed
-    if ( formData.bloodGroup === "" || formData.quantity === "" || formData.location === "") {
+    if ( formData.bloodGroup === "" || formData.quantity === "" || formData.location === ""|| formData.description === "") {
       formValid = false;
       setShowError(true);
       setTimeout(() => setShowError(false), 5000);
@@ -37,14 +38,15 @@ export default function Form() {
     if (formValid) {
       try {
         const requestMap = {
-          name:"formData.name",
+          name: "",
           bloodGroup: formData.bloodGroup,
           quantity: formData.quantity,
-          location: formData.location
+          location: formData.location,
+          description : formData.description
         };
 
         // Send donation request
-        const response = await axios.post("/user/donationrequest", requestMap)
+        const response = await axios.post("/user/bloodappeal", requestMap)
 
         if (response.status === 200) {
           setShowSuccess(true);
@@ -67,11 +69,13 @@ export default function Form() {
   return (
     <div className='min-h-screen h-screen w-full bg-background text-text border-t flex flex-col justify-center items-center'>
       <div className='mb-5'>
-        <h1 className='text-3xl'>Donor Form</h1>
+        <h1 className='text-3xl'>Blood Appeal Form</h1>
       </div>
       <form
         className='container w-2/5 flex flex-col gap-5'
         onSubmit={handleSubmit}>
+        
+  
 
         {/* Blood Group */}
         <select
@@ -116,17 +120,29 @@ export default function Form() {
             required
           />
         </label>
-
+       {/* Description */}
+       <label className='input input-bordered flex items-center gap-2'>
+        Description
+          <input
+            type='text'
+            name='description'
+            value={formData.description}
+            onChange={handleChange}
+            className='grow'
+            placeholder='contact, patient and purpose'
+            required
+          />
+        </label>
         {/* Submit Button */}
         <input
           className='w-full py-3 px-5 text-sm text-center font-medium border text-text border-[#383F47] rounded-md hover:bg-primary hover:text-text hover:border-primary focus:outline-none focus:ring-0'
           type='submit'
-          value='Submit Donation'
+          value='Submit Appeal'
         />
       </form>
 
       {/* Success and Error Alerts */}
-      {showSuccess && <SuccessAlert message='Donation request submitted successfully!' />}
+      {showSuccess && <SuccessAlert message='Blood appeal submitted successfully!' />}
       {showError && <ErrorAlert message='Form submission failed!' />}
     </div>
   );

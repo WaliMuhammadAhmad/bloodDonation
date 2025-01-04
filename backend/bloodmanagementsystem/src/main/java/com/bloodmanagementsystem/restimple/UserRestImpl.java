@@ -1,5 +1,6 @@
 package com.bloodmanagementsystem.restimple;
 
+import com.bloodmanagementsystem.Config.CustomerUserDetailsService;
 import com.bloodmanagementsystem.Config.JwtUtils;
 import com.bloodmanagementsystem.Config.Log;
 import com.bloodmanagementsystem.Model.DonationRequest;
@@ -23,6 +24,8 @@ public class UserRestImpl implements UserRest {
     UserService userService;
     @Autowired
     private JwtUtils jwtUtils;
+    @Autowired
+    private CustomerUserDetailsService customerUserDetailsService;
 
     //    -------Api implementation for sign up
     @Override
@@ -56,10 +59,10 @@ public class UserRestImpl implements UserRest {
             if (authenticatedUser != null) {
                 // Generate JWT token
                 String token = jwtUtils.generateToken(email);
-
+                customerUserDetailsService.staticToken=token;
                 // Prepare JSON response
-                String jsonResponse = String.format("{\"token\": \"%s\", \"user\": %s}", 
-                    token, authenticatedUser);
+                String jsonResponse = String.format("{\"token\": \"%s\", \"user\": %s}", token, authenticatedUser);
+                //String jsonResponse = String.format(token);
 
                 // Return token and user details
                 return ResponseEntity.ok(jsonResponse);
@@ -104,11 +107,16 @@ public class UserRestImpl implements UserRest {
             return new ResponseEntity<>("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-  
-    public ResponseEntity<DonationRequest> requestDonation(Map<String, Object> requestMap) {
-    	Log.logApiRequest("POST", "/user/donationrequest");
-        DonationRequest createdRequest = userService.createDonationRequest(requestMap);
-        return ResponseEntity.ok(createdRequest);
+    @Override
+    public ResponseEntity<String> requestDonation(Map<String, String> requestMap) {
+    	try {
+        	Log.logApiRequest("POST", "/user/donationrequest");
+            return userService.createDonationRequest(requestMap);
+        } catch (Exception ex) {
+            Log.logError("An error occurred while processing the request.", ex);
+            ex.printStackTrace();
+            return new ResponseEntity<>("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 //
 //    //---------Api implementation for Update Status

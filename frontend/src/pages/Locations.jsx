@@ -2,7 +2,6 @@ import React from "react";
 import Navbar from "../components/Navbar";
 import Starter from "../components/Starter";
 import Intro from "../components/Intro";
-import Gallery from "../components/Gallery";
 import Cards from "../components/Cards";
 import Footer from "../components/Footer";
 import Testimonials from "../components/Testimonials";
@@ -22,7 +21,6 @@ export default function Approach() {
       />
       <Intro />
       <CitiesSection />
-      <Gallery />
       <Testimonials />
       <Cards />
       <Footer />

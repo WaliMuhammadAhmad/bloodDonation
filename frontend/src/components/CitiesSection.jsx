@@ -18,10 +18,9 @@ export default function CitiesSection() {
     }
 
     try {
-      // -> change original api name here
-      const response = await axios.get("/api/getInventoryByBloodAndCity", {
+      const response = await axios.post("/inventory/getInventoryByBloodAndCity", {
         city: selectedCity,
-        bloodGroup: selectedBloodGroup,
+        bloodGroupName: selectedBloodGroup,
       });
 
       if (response.data) {
@@ -42,9 +41,9 @@ export default function CitiesSection() {
     <div
       data-scroll
       data-scroll-section
-      className='w-full min-h-[50dvh] h-auto bg-background text-text flex flex-col gap-10 justify-center items-center'>
+      className='w-full min-h-[50dvh] h-auto bg-background text-text flex flex-col gap-10 justify-center items-center rounded-xl'>
       <div className='text-center'>
-        <Title>Our Locations</Title>
+        <Title>Search Blood</Title>
       </div>
       <div>
         <div className='container flex flex-col gap-5 justify-start'>

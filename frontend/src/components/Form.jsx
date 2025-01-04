@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import axios from "axios";
 import { SuccessAlert, ErrorAlert } from "./common/Alerts";
+import bloodInventory from "../data/content/bloodInventory";
 
 export default function Form() {
   const location = useLocation();
@@ -67,7 +68,7 @@ export default function Form() {
   return (
     <div className='min-h-screen h-screen w-full bg-background text-text border-t flex flex-col justify-center items-center'>
       <div className='mb-5'>
-        <h1 className='text-3xl'>Donor Form</h1>
+        <h1 className='text-6xl mb-2'>Donor Form</h1>
       </div>
       <form
         className='container w-2/5 flex flex-col gap-5'
@@ -78,12 +79,12 @@ export default function Form() {
           name='bloodGroup'
           value={formData.bloodGroup}
           onChange={handleChange}
-          className='select select-bordered w-full max-w-xs'
+          className='select select-bordered w-full'
           required>
           <option disabled value=''>Blood Group</option>
-          <option>A+</option>
-          <option>B+</option>
-          <option>O-</option>
+          {bloodInventory.map((blood)=>(
+                  <option value={blood.type} key={blood.id}>{blood.type}</option>
+                ))}
           {/* Add other blood groups if needed */}
         </select>
 
@@ -97,10 +98,12 @@ export default function Form() {
             onChange={handleChange}
             className='grow'
             step={1}
+            min={0}
+            max={10}
             placeholder='Units'
             required
           />
-          <span className='badge badge-error'>Liters</span>
+          <span className='badge badge-error'>Units</span>
         </label>
 
         {/* Location */}

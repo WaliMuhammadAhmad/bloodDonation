@@ -38,7 +38,7 @@ function RenderHome({ role }) {
 
         // Fetch appeals
         if (role === "admin" || role === "user") {
-          const appealsResponse = await axios.get("/api/appeals"); // add your adpi here for appeals
+          const appealsResponse = await axios.get("/admin/bloodappeals");
           setAppeals(
             appealsResponse.data.length > 0
               ? appealsResponse.data
@@ -48,7 +48,7 @@ function RenderHome({ role }) {
 
         // Fetch donor requests
         if (role === "admin" || role === "donor") {
-          const donorRequestsResponse = await axios.get("/admin/donationrequests"); // add your api here for requests - noman app try kro is ko ma khaha kahne laga koi issue ho ap call kr dena ok
+          const donorRequestsResponse = await axios.get("/admin/donationrequests");
           setDonorRequests(
             donorRequestsResponse.data.length > 0
               ? donorRequestsResponse.data
@@ -104,66 +104,55 @@ function RenderHome({ role }) {
 
         {/* Role-Based Sections */}
         {role === "admin" && (
-          <>
-            {/* Latest Appeals */}
-            <div className='mt-5 w-full'>
-              <h1 className='text-text text-2xl mb-3'>Latest Appeals</h1>
-              <div className={theme.GridBox}>
-                {appeals.map((appeal) => (
-                  <div key={appeal.id} className={theme.GridItem}>
-                    <p className='font-semibold'>{appeal.user}</p>
-                    <p>Blood Group: {appeal.bloodGroup}</p>
-                    <p className='text-primary'>Status: {appeal.status}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Latest Donor Requests */}
-            <div className='mt-5 w-full'>
-              <h1 className='text-text text-2xl mb-3'>Latest Donor Requests</h1>
-              <div className={theme.GridBox}>
-                {donorRequests.map((request) => (
-                  <div key={request.id} className={theme.GridItem}>
-                    <p className='font-semibold'>{request.donor}</p>
-                    <p>Blood Group: {request.bloodGroup}</p>
-                    <p className='text-primary'>Status: {request.status}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
-
-        {role === "user" && (
-          <div className='mt-5 w-full'>
-            <h1 className='text-text text-2xl mb-3'>My Appeals</h1>
-            <div className={theme.GridBox}>
-              {appeals.map((appeal) => (
-                <div key={appeal.id} className={theme.GridItem}>
-                  <p className='font-semibold'>{appeal.user}</p>
-                  <p>Blood Group: {appeal.bloodGroup}</p>
-                  <p className='text-primary'>Status: {appeal.status}</p>
-                </div>
-              ))}
-            </div>
+  <>
+    {/* Latest Appeals */}
+    <div className="mt-5 w-full">
+      <h1 className="text-text text-2xl mb-3">Latest Appeals</h1>
+      <div className={theme.GridBox}>
+        {appeals.slice(0, 3).map((appeal) => (
+          <div key={appeal.appealID} className={theme.GridItem}>
+            <p className="font-semibold">{appeal.user.name}</p>
+            <p>Blood Group: {appeal.bloodGroup.bloodGroup}</p>
+            <p className="text-primary">Status: {appeal.status}</p>
           </div>
-        )}
+        ))}
+      </div>
+    </div>
 
-        {role === "donor" && (
-          <div className='mt-5 w-full'>
-            <h1 className='text-text text-2xl mb-3'>My Donation Requests</h1>
-            <div className={theme.GridBox}>
-              {donorRequests.map((request) => (
-                <div key={request.id} className={theme.GridItem}>
-                  <p className='font-semibold'>{request.donor}</p>
-                  <p>Blood Group: {request.bloodGroup}</p>
-                  <p className='text-primary'>Status: {request.status}</p>
-                </div>
-              ))}
-            </div>
+    {/* Latest Donor Requests */}
+    <div className="mt-5 w-full">
+      <h1 className="text-text text-2xl mb-3">Latest Donor Requests</h1>
+      <div className={theme.GridBox}>
+        {donorRequests.slice(0, 3).map((request) => (
+          <div key={request.requestID} className={theme.GridItem}>
+            <p className="font-semibold">{request.user.name}</p>
+            <p>Blood Group: {request.bloodGroup.bloodGroup}</p>
+            <p className="text-primary">Status: {request.status}</p>
           </div>
-        )}
+        ))}
+      </div>
+    </div>
+  </>
+)}
+
+
+{role === "user" && (
+  <div className="mt-5 w-full">
+    <h1 className="text-text text-2xl mb-3">My Recent Appeals</h1>
+    <div className={theme.GridBox}>
+      {appeals.slice(0, 9).map((appeal) => (
+        <div key={appeal.appealID} className={theme.GridItem}>
+          <p className="font-semibold">{appeal.bloodGroup.bloodGroup}</p>
+          <p>Quantity: {appeal.quantity}</p>
+          <p className="text-primary">Status: {appeal.status}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
+
+    
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { theme } from "./theme";
 import axios from "axios";
 
-const dummyRequests = [
+const dummyDonate = [
   {
     id: 1,
     user: "John Doe",
@@ -36,137 +36,142 @@ const dummyRequests = [
 ];
 
 // eslint-disable-next-line react/prop-types
-function RenderManageDonarRequests({ role }) {
-  const [requests, setRequests] = useState([]);
+function RenderDonarRequests({ role }) {
+  const [Donate, setDonate] = useState([]);
 
-  // Fetch requests from the backend
+  // GET
   useEffect(() => {
-    const fetchRequests = async () => {
+    const fetchDonate = async () => {
       try {
-        const response = await axios.get("/donationrequests");
+        const response = await axios.get("/admin/donationrequests");
         if (response.data && response.data.length > 0) {
-          setRequests(response.data); // Use backend data if available
+          setDonate(response.data);
         } else {
-          setRequests(dummyRequests); // Fallback to dummy data
+          setDonate(dummyDonate);
         }
       } catch (error) {
-        console.error("Error fetching requests:", error);
-        setRequests(dummyRequests); // Fallback to dummy data on error
+        console.error("Error fetching Donate:", error);
+        setDonate(dummyDonate);
       }
     };
 
-    fetchRequests();
+    fetchDonate();
   }, []);
 
-  // Update request status (PUT request)
-  const updateRequestStatus = async (id, status) => {
+  const cancelAppeal = async (id) => {
     try {
-      await axios.put(`/api/blood-donation-requests/${id}`, { status });
-      setRequests((prev) =>
-        prev.map((request) =>
-          request.id === id ? { ...request, status } : request
+      await axios.put(`/donationrequest/reject/${id}`, { status: "Cancelled" });
+      setDonate((prev) =>
+        prev.map((appeal) =>
+          appeal.id === id ? { ...appeal, status: "Cancelled" } : appeal
         )
       );
     } catch (error) {
-      console.error("Error updating request status:", error);
+      console.error("Error cancelling appeal:", error);
     }
   };
 
-  // Delete request (DELETE request)
-  const deleteRequest = async (id) => {
+  const approveAppeal = async (id) => {
+
     try {
-      await axios.delete(`/api/blood-donation-requests/${id}`);
-      setRequests((prev) => prev.filter((request) => request.id !== id));
+      const res = await axios.put(`/admin/donationrequest/approve/${id}`, { remarks: "APPROVED" });
+      alert(res.data);
+      setDonate((prev) =>
+        prev.map((appeal) =>
+          appeal.requestID === id ? { ...appeal, status: "APPROVED" } : appeal
+        )
+      );
     } catch (error) {
-      console.error("Error deleting request:", error);
+      console.error("Error approving appeal:", error);
     }
   };
 
-  // Cancel request (for non-admin roles)
-  const cancelRequest = (id) => {
-    updateRequestStatus(id, "Cancelled");
+  const rejectAppeal = async (id) => {
+    try {
+      const res = await axios.put(`/admin/donationrequest/reject/${id}`, { remarks: "REJECTED" });
+      alert(res.data);
+      setDonate((prev) =>
+        prev.map((appeal) =>
+          appeal.requestID === id ? { ...appeal, status: "REJECTED" } : appeal
+        )
+      );
+    } catch (error) {
+      console.error("Error rejecting appeal:", error);
+    }
   };
 
-  // Approve request (for admin role)
-  const approveRequest = (id) => {
-    updateRequestStatus(id, "Approved");
+  const deleteAppeal = async (id) => {
+    try {
+      await axios.delete(`/api/blood-Donate/${id}`);
+      setDonate((prev) => prev.filter((appeal) => appeal.id !== id));
+    } catch (error) {
+      console.error("Error deleting appeal:", error);
+    }
   };
 
-  // Reject request (for admin role)
-  const rejectRequest = (id) => {
-    updateRequestStatus(id, "Rejected");
-  };
-
-  // Render requests based on status
-  const renderRequests = (status) =>
-    requests
-      .filter((request) => request.status === status)
-      .map((request) => (
-        <div key={request.id} className={theme.ProjectCards}>
-          {/* Request Details */}
+  const renderDonate = (status) =>
+    Donate
+      .filter((appeal) => appeal.status === status)
+      .map((appeal) => (
+        <div key={appeal.requestID} className={theme.ProjectCards}>
           <div className='flex flex-col gap-1 text-text'>
             <p>
-              <span className='font-bold'>User:</span> {request.user}
+              <span className='font-bold'>User:</span> {appeal.user.name}
             </p>
             <p>
-              <span className='font-bold'>Blood Type:</span> {request.bloodType}
+              <span className='font-bold'>Blood Type:</span> {appeal.bloodGroup.bloodGroup}
             </p>
             <p>
-              <span className='font-bold'>Quantity:</span> {request.quantity}{" "}
+              <span className='font-bold'>Quantity:</span> {appeal.quantity}{" "}
               Units
             </p>
             <p>
-              <span className='font-bold'>City:</span> {request.city}
+              <span className='font-bold'>Email:</span> {appeal.user.email}
             </p>
             <p>
-              <span className='font-bold'>Location:</span> {request.location}
-            </p>
-            <p>
-              <span className='font-bold'>Priority:</span> {request.priority}
+              <span className='font-bold'>Location:</span> {appeal.location}
             </p>
           </div>
-
-          {/* Actions */}
           <div className='flex gap-2'>
-            {role === "admin" && status === "Pending" && (
+            {role === "admin" && status === "PENDING" && (
               <>
                 <button
                   className={`${theme.ActionButton} btn-success`}
-                  onClick={() => approveRequest(request.id)}>
+                  onClick={() => approveAppeal(appeal.requestID)}>
                   Approve
                 </button>
                 <button
                   className={`${theme.ActionButton} btn-error`}
-                  onClick={() => rejectRequest(request.id)}>
+                  onClick={() => rejectAppeal(appeal.requestID)}>
                   Reject
                 </button>
               </>
             )}
-            {role === "admin" && status === "Approved" && (
+            {role === "admin" && status === "APPROVED" && (
               <button
                 className={`${theme.ActionButton} btn-error`}
-                onClick={() => deleteRequest(request.id)}>
+                onClick={() => deleteAppeal(appeal.requestID)}>
                 Delete
               </button>
             )}
-            {role === "admin" && status === "Rejected" && (
+            {role === "admin" && status === "REJECTED" && (
               <>
                 <button
                   className={`${theme.ActionButton} btn-success`}
-                  onClick={() => approveRequest(request.id)}>
+                  onClick={() => approveAppeal(appeal.requestID)}>
                   Approve Again
                 </button>
                 <button
                   className={`${theme.ActionButton} btn-error`}
-                  onClick={() => deleteRequest(request.id)}>
+                  onClick={() => deleteAppeal(appeal.requestID)}>
                   Delete
                 </button>
               </>
             )}
-            {role !== "admin" && status === "Pending" && (
+            {role !== "admin" && status === "PENDING" && (
               <button
                 className={`${theme.ActionButton} btn-error`}
-                onClick={() => cancelRequest(request.id)}>
+                onClick={() => cancelAppeal(appeal.requestID)}>
                 Cancel
               </button>
             )}
@@ -176,25 +181,20 @@ function RenderManageDonarRequests({ role }) {
 
   return (
     <div className='flex flex-col gap-5 h-full'>
-      {/* Pending Requests */}
       <div className='w-full'>
-        <h2 className={theme.SectionTitle}>Pending Requests</h2>
-        <div className='flex flex-col gap-3'>{renderRequests("Pending")}</div>
+        <h2 className={theme.SectionTitle}>Pending Donate</h2>
+        <div className='flex flex-col gap-3'>{renderDonate("PENDING")}</div>
       </div>
-
-      {/* Approved Requests */}
       <div className='w-full'>
-        <h2 className={theme.SectionTitle}>Approved Requests</h2>
-        <div className='flex flex-col gap-3'>{renderRequests("Approved")}</div>
+        <h2 className={theme.SectionTitle}>Approved Donate</h2>
+        <div className='flex flex-col gap-3'>{renderDonate("APPROVED")}</div>
       </div>
-
-      {/* Rejected Requests */}
       <div className='w-full'>
-        <h2 className={theme.SectionTitle}>Rejected Requests</h2>
-        <div className='flex flex-col gap-3'>{renderRequests("Rejected")}</div>
+        <h2 className={theme.SectionTitle}>Rejected Donate</h2>
+        <div className='flex flex-col gap-3'>{renderDonate("REJECTED")}</div>
       </div>
     </div>
   );
 }
 
-export default RenderManageDonarRequests;
+export default RenderDonarRequests;

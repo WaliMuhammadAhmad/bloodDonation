@@ -1,6 +1,7 @@
-import logout from "../hooks/useAuth";
+import { useNavigate } from "react-router";
 
 export default function Topbar() {
+  const navigate = useNavigate();
   return (
     <div className='h-15 w-full bg-background text-text flex justify-between items-center px-5 py-2'>
       <div>
@@ -8,9 +9,9 @@ export default function Topbar() {
       </div>
       <div>
         <button
-          onClick={logout}
+          onClick={()=>navigate('/')}
           className='border border-text text-text px-4 py-2 rounded'>
-          Logout
+          Home
         </button>
       </div>
     </div>

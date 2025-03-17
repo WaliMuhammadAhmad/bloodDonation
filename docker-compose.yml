@@ -1,41 +1,23 @@
-version: "3.9"
-
 services:
-  backend:
+  app:
+    image: blood-donation-app
+    container_name: blood-donation-app
     build:
-      context: ./backend
+      context: .
       dockerfile: Dockerfile
-    container_name: spring-backend
     ports:
-      - "8080:8080"
-    depends_on:
-      - db
+      - "5173:5173" # React
+      - "8080:8080" # Spring Boot
+      - "3306:3306" # MySQL
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/bloodmanagementsystem?useSSL=false
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: rootpassword
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: react-frontend
-    ports:
-      - "5173:5173"
+      - SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/bloodmanagementsystem
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=bloodmanagementsystem
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
     volumes:
-      - ./frontend:/app
-    working_dir: /app
-
-  db:
-    image: mysql:8.0
-    container_name: mysql-db
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: bloodmanagementsystem
-    ports:
-      - "3306:3306"
-    volumes:
-      - db-data:/var/lib/mysql
-
-volumes:
-  db-data:
+      - .:/workspace
+      - ~/.gitconfig:/root/.gitconfig
+    working_dir: /workspace
